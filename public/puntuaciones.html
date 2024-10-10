@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puntuaciones</title>
+    <link rel="stylesheet" href="/css/puntuaciones.css">
+</head>
+
+<body>
+
+    <!-- Encapsular todo en game-canvas -->
+    <div class="game-canvas">
+        <header>
+            <div class="animated-logo">
+                <img src="img/logo.png" alt="Logo del Juego">
+            </div><br>
+
+            <h1>Tabla de Clasificaciones</h1>
+
+            <button onclick="window.location.href='mainMenu2.html'">Regresar al Menú</button>
+            <button id="switchTable">Modo Contrarreloj</button><br><br><br>
+
+            <h2 id="modeTitle">Modo Historia</h2>
+        </header>
+
+        <div class="table-container">
+
+            <div class="table-history" id="tableHistory">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Jugador</th>
+                            <th>Puntuación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>TofiDofi</td>
+                            <td>2702</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>WintryAuthor</td>
+                            <td>2309</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Ryupat</td>
+                            <td>2201</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Andy</td>
+                            <td>907</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Roger gz</td>
+                            <td>706</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Nopal MBA</td>
+                            <td>702</td>
+                        </tr>
+                        <tr bgcolor="orange">
+                            <td>46</td>
+                            <td>Memorandum</td>
+                            <td>406</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-clock" id="tableClock" style="display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <td></td>
+                            <th>Jugador</th>
+                            <th>Tiempo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Ryupat</td>
+                            <td>01:22</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Nopal MBA</td>
+                            <td>02:07</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>TofiDofi</td>
+                            <td>02:27</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Memorandum</td>
+                            <td>06:04</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Roger gz</td>
+                            <td>06:07</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Andy</td>
+                            <td>07:09</td>
+                        </tr>
+                        <tr bgcolor="orange">
+                            <td>23</td>
+                            <td>WintryAuthor</td>
+                            <td>09:23</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="animated-image">
+                <img src="img/bot.png" alt="Animación">
+            </div>
+
+            <div class="animated-bomb">
+                <img src="img/bomb.png" alt="Animación">
+            </div>
+
+        </div>
+    </div>
+
+    <script src="/js/puntuaciones.js"></script>
+</body>
+
+</html>

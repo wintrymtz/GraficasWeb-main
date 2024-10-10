@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selección de Nivel</title>
+    <link type="text/css" rel="stylesheet" href="/css/nivel.css">
+</head>
+
+<body>
+
+    <!-- Encapsular todo en game-canvas -->
+    <div class="game-canvas">
+        <header>
+            <div class="header-content">
+
+                <div class="menu-button-left">
+                    <button id="menuPrincipal">Menú Principal</button>
+                </div>
+
+                <div class="logo">
+                    <img src="img/logo.png" alt="Logo del Juego">
+                </div>
+
+            </div>
+        </header>
+
+        <div class="selector">
+            <button id="leftTor"><img src="img/tornillo.png" alt="leftTor"></button>
+
+            <h1 id="gameMode">Modo Historia</h1>
+
+            <button id="rightTor"><img src="img/tornillo2.png" alt="rightTor"></button>
+        </div>
+
+        <div class="niveles">
+
+            <div class="portadas">
+                <img src="img/map1.jpg" alt="Nivel 1" id="imgLevel1" class="level-image selected">
+                <img src="img/map2.jpg" alt="Nivel 2" id="imgLevel2" class="level-image">
+                <img src="img/map3.jpg" alt="Nivel 3" id="imgLevel3" class="level-image">
+            </div>
+
+            <div class="NivelDescripcion">
+                <p id="descripcion">NIVEL 1. Colina de la polvora</p>
+            </div>
+
+            <!-- Botón de jugar -->
+            <div class="menu-button">
+                <button id="jugar">JUGAR</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="/js/nivel.js"></script>
+</body>
+
+</html>

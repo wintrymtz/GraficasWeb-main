@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+
+    <!--Boostrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <link href="/css/configuration.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="game-canvas">
+        <div class="arrow" id="back">
+            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-arrow-left"
+                viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                    d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
+            </svg>
+        </div>
+        <div class="main-container">
+            <div class="left-column">
+                <div class="config-section">
+                    <label class="subtitle">Juego</label>
+                    <br>
+                    <table class="config-table">
+                        <tr>
+                            <td class="table-property">
+                                <label class="property">Dificultad</label>
+                            </td>
+                            <td class="table-option">
+                                <select class="config-select" id="">
+                                    <option>Normal</option>
+                                    <option>Dificil</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-property">
+                                <label class="property">Sensibilidad</label>
+                            </td>
+                            <td class="table-option">
+                                <label id="sensibility-value" class="property">0</label> <input type="range">
+                            </td>
+                        </tr>
+                    </table>
+
+                    <label class="subtitle">Controles</label>
+                    <br>
+                    <table class="config-table">
+                        <tr>
+                            <td class="table-property">
+                                <label class="property">Saltar</label>
+                            </td>
+                            <td class="table-option">
+                                <label class="property input">SPACE</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-property">
+                                <label class="property">Adelante</label>
+                            </td>
+                            <td class="table-option">
+                                <label class="property input">W</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-property">
+                                <label class="property">Derecha</label>
+                            </td>
+                            <td class="table-option">
+                                <label class="property input">D</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-property">
+                                <label class="property">Izquierda</label>
+                            </td>
+                            <td class="table-option">
+                                <label class="property input">A</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-property">
+                                <label class="property">Atrás</label>
+                            </td>
+                            <td class="table-option">
+                                <label class="property input">S</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-property">
+                                <label class="property">Utilizar objeto</label>
+                            </td>
+                            <td class="table-option">
+                                <label class="property input">CLICK DER.</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+
+
+
+
+            </div>
+            <div class="right-column">
+                <div class="config-section">
+                    <label class="subtitle">Sonido</label>
+                    <br>
+                    <table class="config-table">
+                        <tr>
+                            <td class="table-property">
+                                <label class="property">Volumen General</label>
+                            </td>
+                            <td class="table-option">
+                                <label id="vGeneral-value" class="property">0</label>
+                                <input type="range">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-property">
+                                <label class="property">Volumen Musica</label>
+                            </td>
+                            <td class="table-option">
+                                <label id="vMusic-value" class="property">0</label>
+                                <input type="range">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-property">
+                                <label class="property">Volumen Efectos</label>
+                            </td>
+                            <td class="table-option">
+                                <label id="vEffects-value" class="property">0</label>
+                                <input type="range">
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<!--Boostrap-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+<script src="/js/configuration.js"></script>
+
+</html>

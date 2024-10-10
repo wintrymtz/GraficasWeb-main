@@ -1,0 +1,115 @@
+body,
+html {
+    background-image: url('../img/back2.jpg');
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #585858;
+
+}
+
+canvas {
+    border: 2px solid #fff;
+    background-color: #000;
+    background-image: url("../img/gameport.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    display: block;
+    border: 2px solid #fff;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    transition: filter 0.3s ease;
+}
+
+#pauseMenu {
+    /* display: none; */
+    position: fixed;
+    top: 50%;
+    left: -300px;
+    transform: translateY(-50%);
+    background-color: rgba(167, 167, 167, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    z-index: 1000;
+    text-align: left;
+    transition: all 0.5s ease;
+
+}
+
+#pauseMenu.active {
+    left: 25%;
+}
+
+.menu-button {
+    display: block;
+    padding: 10px 20px;
+    background-color: #cdcdcd;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px 0;
+    text-align: left;
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+/* Animación para los botones */
+#pauseMenu.active .menu-button {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Retardo escalonado para cada botón */
+.menu-button:nth-child(2) {
+    transition-delay: 0.1s;
+}
+
+.menu-button:nth-child(3) {
+    transition-delay: 0.2s;
+}
+
+.menu-button:nth-child(4) {
+    transition-delay: 0.3s;
+}
+
+.menu-button:nth-child(5) {
+    transition-delay: 0.4s;
+}
+
+.menu-button:hover {
+    background-color: #666;
+}
+
+
+.content {
+    padding: 20px;
+    font-size: 24px;
+    text-align: center;
+    color: #fff;
+}
+
+#gameUI {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 8px;
+    z-index: 1000;
+}
+
+#gameUI p {
+    margin: 0;
+}

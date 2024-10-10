@@ -1,0 +1,229 @@
+body {
+    display: flex;
+    background-color: gray;
+    justify-content: center;
+    align-items: center;
+    height: 800px;
+    overflow: hidden;
+}
+
+.game-canvas {
+    display: flex;
+    width: 1280px;
+    height: 720px;
+    border: 1px solid rgb(255, 255, 255);
+    background-color: rgb(144, 255, 253);
+    padding: 50px 0px 50px 50px;
+    justify-content: space-between;
+}
+
+.section-title {
+    display: block;
+    margin: auto;
+    /* background-color: red; */
+    height: 100%;
+    width: 40%;
+    margin-bottom: 20px;
+    margin-left: 10px;
+}
+
+.image {
+    text-align: right;
+    width: 60%;
+    animation: bounce 1s ease-in-out;
+}
+
+#title-image {
+    animation: appear 1s ease-in-out;
+}
+
+.image img {
+    width: 600px;
+}
+
+.section-buttons {
+    display: flex;
+    width: 40%;
+    height: 100%;
+    /* background-color: brown; */
+    flex-direction: column;
+    justify-content: center;
+}
+
+.section-buttons .image-container {
+    width: 80%;
+    margin: auto;
+    margin-bottom: 50px;
+    margin-top: 0
+}
+
+.section-buttons img {
+    width: 300px;
+    margin: auto;
+}
+
+.div-button {
+    /* background-color: rebeccapurple; */
+    width: 80%;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.tornillo {
+    opacity: 0.7;
+    width: 50px;
+
+}
+
+/* From Uiverse.io by elijahgummer */
+.button-with-icon {
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #0f988e;
+    font-family: "Istok Web", sans-serif;
+    letter-spacing: 1px;
+    padding: 0 12px;
+    text-align: center;
+    width: 120px;
+    height: 40px;
+    font-size: 24px;
+    text-transform: uppercase;
+    font-weight: normal;
+    border-radius: 3px;
+    outline: none;
+    user-select: none;
+    cursor: pointer;
+    transform: translateY(0px);
+    position: relative;
+    box-shadow:
+        inset 0 30px 30px -15px rgba(255, 255, 255, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+        inset 0 1px 20px rgba(0, 0, 0, 0),
+        0 3px 0 #0d9f2f,
+        0 3px 2px rgba(0, 0, 0, 0.2),
+        0 5px 10px rgba(0, 0, 0, 0.1),
+        0 10px 20px rgba(0, 0, 0, 0.1);
+    background: #15cc40;
+    color: white;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    transition: 150ms all ease-in-out;
+}
+
+.button-with-icon .icon {
+    margin-right: 8px;
+    width: 54px;
+    height: 54px;
+    transition: all 0.5s ease-in-out;
+}
+
+.button-with-icon:active {
+    transform: translateY(3px);
+    box-shadow:
+        inset 0 16px 2px -15px rgba(0, 0, 0, 0),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+        inset 0 1px 20px rgba(0, 0, 0, 0.1),
+        0 0 0 #0f988e,
+        0 0 0 2px rgba(255, 255, 255, 0.5),
+        0 0 0 rgba(0, 0, 0, 0),
+        0 0 0 rgba(0, 0, 0, 0);
+}
+
+
+/*Play*/
+.play:hover .icon {
+    transform: translate(75px);
+}
+
+.play {
+    padding-left: 0;
+}
+
+/* .play:hover {
+    background-color: rgb(32, 125, 255);
+} */
+
+.play:hover .text {
+    transform: translateX(240px);
+}
+
+/*Scores*/
+.scores:hover .icon {
+    transform: translate(90px);
+}
+
+.scores:hover .text {
+    transform: translateX(240px);
+}
+
+/*Configuraciones*/
+.configuration:hover .icon {
+    transform: translate(110px);
+}
+
+.configuration:hover .text {
+    transform: translateX(240px);
+}
+
+
+.text {
+    transition: all 0.5s ease-in-out;
+}
+
+.play {
+    width: 350px;
+    height: 90px;
+    font-size: 40px;
+}
+
+.scores {
+    width: 300px;
+    height: 80px;
+    /* background-color: rgb(182, 55, 255); */
+}
+
+.scores .icon {
+    width: 35px;
+    height: 35px;
+}
+
+.configuration {
+    width: 300px;
+    height: 80px;
+    /* background-color: rgb(70, 70, 255); */
+}
+
+.configuration .icon {
+    width: 35px;
+    height: 35px;
+}
+
+
+@keyframes bounce {
+    0% {
+        transform: translate(300px, 200px) scale(0.7, 0.7);
+        /* La imagen comienza por encima de la pantalla */
+    }
+
+    100% {
+        /* Regresa a la posición de rebote */
+        transform: translate(0, 0) scale(1, 1);
+        /* Sin compresión */
+    }
+}
+
+@keyframes appear {
+    0% {
+        transform: translate(0px, -100px);
+        opacity: 0.0;
+        /* La imagen comienza por encima de la pantalla */
+    }
+
+    100% {
+        /* Regresa a la posición de rebote */
+        transform: translate(0, 0) scale(1, 1);
+        /* Sin compresión */
+    }
+}
