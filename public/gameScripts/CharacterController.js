@@ -14,9 +14,19 @@ export class CharacterController {
         this.forward = new THREE.Vector3(0, 0, 1);
         this.left = new THREE.Vector3(0, 0, 0);
 
+        this.camForward = new THREE.Vector3(0, 0, 1);
+        this.camLeft = new THREE.Vector3(0, 0, 0);
+
         this.left.copy(this.forward);
         this.left.cross(Object3d.up);
+
+        this.camLeft.copy(this.camForward);
+        this.camLeft.cross(Object3d.up);
+
         console.log(this.left);
+
+        const dir = new THREE.Vector3(1, 2, 0);
+
     }
 
     Move() {
@@ -27,68 +37,42 @@ export class CharacterController {
         let keys = this.input.getKeys();
 
 
-        let newPos = new THREE.Vector3(0, 0, 0);
-        let movement = new THREE.Vector3(0, 0, 0);
+        let newPos = new THREE.Vector3();
+        let movement = new THREE.Vector3();
         newPos.copy(this.Object3d.position);
 
         if (keys.forward) {
-            console.log('forward');
-            movement.add(this.forward.clone().multiplyScalar(this.velocity));
+            // console.log('forward');
+            movement.add(this.camForward.clone().multiplyScalar(this.velocity * delta));
         }
         if (keys.backward) {
-            console.log('backward');
-            movement.add(this.forward.clone().multiplyScalar(-this.velocity));
+            // console.log('backward');
+            movement.add(this.camForward.clone().multiplyScalar(-this.velocity * delta));
         }
         if (keys.right) {
-            console.log('backward');
-            movement.add(this.left.clone().multiplyScalar(this.velocity));
+            // console.log('right');
+            movement.add(this.camLeft.clone().multiplyScalar(this.velocity * delta));
         }
         if (keys.left) {
-            console.log('backward');
-            movement.add(this.left.clone().multiplyScalar(-this.velocity));
+            // console.log('left');
+            movement.add(this.camLeft.clone().multiplyScalar(-this.velocity * delta));
         }
 
-        socket.emit("updatePlayer", this.Object3d.position, 1);
+        if (!movement.equals(new THREE.Vector3(0, 0, 0))) {
+            newPos.add(movement);
+            this.Object3d.lookAt(newPos);
+            let newForward = new THREE.Vector3(0, 0, 0);
+            newForward.set(
+                newPos.x - this.Object3d.position.x,
+                newPos.y - this.Object3d.position.y,
+                newPos.z - this.Object3d.position.z,
+            ).normalize();
+            console.log(this.forward);
+            this.forward.set(newForward.x, newForward.y, newForward.z);
 
-        // if (keys.left) {
-        //     result.copy(this.left);
-        //     console.log('left');
-        //     this.currentSpeed = -this.velocity;
-        // } else if (keys.right) {
-        //     result.copy(this.left);
-        //     console.log('right');
-        //     this.currentSpeed = this.velocity;
-        // } else this.currentSpeed = 0;
+            socket.emit("updatePlayer", this.Object3d.position, 1);
+        }
 
-        // console.log(this.currentSpeed);
-
-        // if (keys.left) {
-        //     console.log('left');
-        //     this.currentSpeed = this.velocity;
-        // } else if (keys.right) {
-        //     console.log('right');
-        //     this.currentSpeed = -this.velocity;
-        // } else this.currentSpeed = 0;
-
-        // if (keys.space) {
-        //     console.log('space');
-        // }
-
-        // if (keys.forward || keys.backward) {
-        //     result.setX(result.x * this.currentSpeed);
-        //     result.setY(result.y * this.currentSpeed);
-        //     result.setZ(result.z * this.currentSpeed);
-        //     newPos.add(result);
-        // }
-
-        // if (keys.left || keys.right) {
-        //     result.setX(result.x * this.currentSpeed);
-        //     result.setY(result.y * this.currentSpeed);
-        //     result.setZ(result.z * this.currentSpeed);
-        //     newPos.add(result);
-        // }
-        newPos.add(movement);
         this.Object3d.position.set(newPos.x, newPos.y, newPos.z);
-
     }
 }

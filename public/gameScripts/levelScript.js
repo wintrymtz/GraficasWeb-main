@@ -27,7 +27,7 @@ function Init() {
             1000
         );
     //x, y, z0
-    camera.position.set(0, 0, 20);
+    camera.position.set(0, 80, -20);
     scene.add(camera);
 
     loader = new THREE.TextureLoader();
@@ -57,8 +57,30 @@ function Init() {
     scene.add(gridHelper);
 
     const cameraControl = new OrbitControls(camera, renderer.domElement);
+    cameraControl.maxDistance = 100;
+    cameraControl.enablePan = false;
+    // cameraControl.maxPolarAngle
+    cameraControl.minDistance = 10;
 
     player = new CharacterController(capsule, camera);
+
+    const g = new THREE.BoxGeometry(7, 4, 4);
+    const m = new THREE.MeshBasicMaterial({ color: '#8e8e8e' });
+    const cube = new THREE.Mesh(g, m);
+    cube.position.set(0, 5, 5);
+    capsule.add(cube);
+    // capsule.add(camera);
+
+
+
+    //normalize the direction vector (convert to vector of length 1)
+
+    const origin = new THREE.Vector3(capsule.position.x, capsule.position.y, capsule.position.z);
+    const length = 30;
+    const hex = 0xffff00;
+
+    const arrowHelper = new THREE.ArrowHelper(player.forward, origin, length, hex);
+    capsule.add(arrowHelper);
 
     // let x = prompt('x');
     // let z = prompt('z');
@@ -81,7 +103,7 @@ function Update() {
         if (typeof child.update === 'function') child.update(delta);
     })
 
-    player.update();
+    player.update(1, delta);
 }
 
 function Render() {
