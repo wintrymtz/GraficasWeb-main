@@ -25,6 +25,11 @@ io.on("connection", function (socket) {
         socket.broadcast.to(roomId).emit("chat", message,);
         console.log(roomId);
     });
+
+    socket.on("updatePlayer", function (position, roomId) {
+        socket.broadcast.to(roomId).emit("updatePlayer", position,);
+        console.log(roomId);
+    });
 })
 
 server.listen(3000, () => {
