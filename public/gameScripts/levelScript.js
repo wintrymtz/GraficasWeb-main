@@ -2,6 +2,7 @@ import * as THREE from "../three.module.js";
 import { OrbitControls } from "../OrbitControls.js";
 import { FirstPersonControls } from "../gameScripts/FirstPersonControls.js";
 import { CharacterController } from "./CharacterController.js";
+import { Collider } from "./Colliders.js";
 
 // const width = 1200;
 // const height = 675;
@@ -15,6 +16,9 @@ let camera;
 let clock;
 let renderer;
 let player;
+let col;
+let col2;
+let objArray = [];
 
 function Init() {
     scene = new THREE.Scene();
@@ -63,6 +67,10 @@ function Init() {
     cameraControl.minDistance = 10;
 
     player = new CharacterController(capsule, camera);
+    col = new Collider(player.Object3d, 1, 13, 20, 13);
+    const helper2 = new THREE.Box3Helper(col.boxBB, 0xffff00);
+    scene.add(helper2);
+    player.setCollider(col);
 
     const g = new THREE.BoxGeometry(7, 4, 4);
     const m = new THREE.MeshBasicMaterial({ color: '#8e8e8e' });
@@ -81,6 +89,17 @@ function Init() {
 
     const arrowHelper = new THREE.ArrowHelper(player.forward, origin, length, hex);
     capsule.add(arrowHelper);
+
+    const Gobs1 = new THREE.BoxGeometry(10, 10, 10);
+    const Mobs1 = new THREE.MeshBasicMaterial({ color: '#8e8e8e' });
+    const obs1 = new THREE.Mesh(Gobs1, Mobs1);
+    col2 = new Collider(obs1, 1, 1, 1, 1);
+    const helper = new THREE.Box3Helper(col2.boxBB, 0xffff00);
+    scene.add(helper);
+
+    obs1.position.set(0, 0, 20);
+    scene.add(obs1);
+
 
     // let x = prompt('x');
     // let z = prompt('z');
@@ -103,7 +122,9 @@ function Update() {
         if (typeof child.update === 'function') child.update(delta);
     })
 
-    player.update(1, delta);
+    player.update(delta, 1, col2);
+    col.update();
+    col2.update();
 }
 
 function Render() {
@@ -116,7 +137,6 @@ renderer.setAnimationLoop(() => {
     Render();
     Update();
 })
-
 
 export { scene };
 
