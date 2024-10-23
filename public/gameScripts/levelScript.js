@@ -18,7 +18,9 @@ let renderer;
 let player;
 let col;
 let col2;
-let objArray = [];
+let ColArray = [];
+let orbitControls;
+let planeCol;
 
 function Init() {
     scene = new THREE.Scene();
@@ -58,13 +60,7 @@ function Init() {
     const size = 100;
     const divisions = 10;
     const gridHelper = new THREE.GridHelper(size, divisions);
-    scene.add(gridHelper);
-
-    const cameraControl = new OrbitControls(camera, renderer.domElement);
-    cameraControl.maxDistance = 100;
-    cameraControl.enablePan = false;
-    // cameraControl.maxPolarAngle
-    cameraControl.minDistance = 10;
+    // scene.add(gridHelper);
 
     player = new CharacterController(capsule, camera);
     col = new Collider(player.Object3d, 1, 13, 20, 13);
@@ -72,6 +68,12 @@ function Init() {
     scene.add(helper2);
     player.setCollider(col);
 
+    orbitControls = new OrbitControls(camera, renderer.domElement);
+    orbitControls.maxDistance = 100;
+    orbitControls.enablePan = false;
+    // cameraControl.maxPolarAngle
+    orbitControls.minDistance = 10;
+    orbitControls.target = player.Object3d.position;
     const g = new THREE.BoxGeometry(7, 4, 4);
     const m = new THREE.MeshBasicMaterial({ color: '#8e8e8e' });
     const cube = new THREE.Mesh(g, m);
@@ -94,12 +96,36 @@ function Init() {
     const Mobs1 = new THREE.MeshBasicMaterial({ color: '#8e8e8e' });
     const obs1 = new THREE.Mesh(Gobs1, Mobs1);
     col2 = new Collider(obs1, 1, 1, 1, 1);
+    ColArray.push(col2);
     const helper = new THREE.Box3Helper(col2.boxBB, 0xffff00);
     scene.add(helper);
 
     obs1.position.set(0, 0, 20);
     scene.add(obs1);
 
+    const planegeometry = new THREE.BoxGeometry(100, 100);
+    const planematerial = new THREE.MeshBasicMaterial({ color: '#5b1c1b' });
+    const plane = new THREE.Mesh(planegeometry, planematerial);
+    plane.position.set(0, -20, 0);
+    plane.rotation.x = (90 * 3.1416 / 180);
+    planeCol = new Collider(plane, 1, 1, 1, 1);
+    ColArray.push(planeCol);
+    const helper3 = new THREE.Box3Helper(planeCol.boxBB, 0xffff00);
+    scene.add(helper3);
+    scene.add(plane);
+
+
+
+    const planegeometry2 = new THREE.BoxGeometry(100, 100);
+    const planematerial2 = new THREE.MeshBasicMaterial({ color: '#5b1c1b' });
+    const plane2 = new THREE.Mesh(planegeometry2, planematerial2);
+    plane2.position.set(130, -20, 0);
+    plane2.rotation.x = (90 * 3.1416 / 180);
+    let planeCol2 = new Collider(plane2, 1, 1, 1, 1);
+    ColArray.push(planeCol2);
+    const helper4 = new THREE.Box3Helper(planeCol2.boxBB, 0xffff00);
+    scene.add(helper4);
+    scene.add(plane2);
 
     // let x = prompt('x');
     // let z = prompt('z');
@@ -122,7 +148,7 @@ function Update() {
         if (typeof child.update === 'function') child.update(delta);
     })
 
-    player.update(delta, 1, col2);
+    player.update(delta, 1, ColArray);
     col.update();
     col2.update();
 }
