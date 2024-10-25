@@ -13,14 +13,25 @@ const height = window.innerHeight;
 let scene;
 let loader;
 let camera;
+let camera2;
 let clock;
 let renderer;
+let renderer2
 let player;
+let player2;
 let col;
 let col2;
+let player2Col;
 let ColArray = [];
-let orbitControls;
+let orbitControl1;
+let orbitControl2;
 let planeCol;
+
+let player2Exist = false;
+let aspect = window.innerWidth / window.innerHeight;
+let aspect2 = window.innerWidth / window.innerHeight * 2;
+
+
 
 function Init() {
     scene = new THREE.Scene();
@@ -28,7 +39,15 @@ function Init() {
     camera = new THREE.PerspectiveCamera
         (
             75,
-            width / height,
+            aspect,
+            0.1,
+            1000
+        );
+
+    camera2 = new THREE.PerspectiveCamera
+        (
+            75,
+            aspect,
             0.1,
             1000
         );
@@ -62,23 +81,29 @@ function Init() {
     const gridHelper = new THREE.GridHelper(size, divisions);
     // scene.add(gridHelper);
 
-    player = new CharacterController(capsule, camera);
+    player = new CharacterController(capsule, camera, 1);
     col = new Collider(player.Object3d, 1, 13, 20, 13);
     const helper2 = new THREE.Box3Helper(col.boxBB, 0xffff00);
     scene.add(helper2);
     player.setCollider(col);
 
-    orbitControls = new OrbitControls(camera, renderer.domElement);
-    orbitControls.maxDistance = 100;
-    orbitControls.enablePan = false;
-    // cameraControl.maxPolarAngle
-    orbitControls.minDistance = 10;
-    orbitControls.target = player.Object3d.position;
     const g = new THREE.BoxGeometry(7, 4, 4);
     const m = new THREE.MeshBasicMaterial({ color: '#8e8e8e' });
     const cube = new THREE.Mesh(g, m);
     cube.position.set(0, 5, 5);
     capsule.add(cube);
+
+
+
+    orbitControl1 = new OrbitControls(camera, renderer.domElement);
+    orbitControl1.maxDistance = 40;
+    orbitControl1.enablePan = false;
+    // cameraControl.maxPolarAngle
+    orbitControl1.minDistance = 20;
+    orbitControl1.target = player.Object3d.position;
+
+
+
     // capsule.add(camera);
 
 
@@ -127,15 +152,49 @@ function Init() {
     scene.add(helper4);
     scene.add(plane2);
 
-    // let x = prompt('x');
-    // let z = prompt('z');
-    // capsule.position.set(x, 0, z);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'O' || e.key === 'o') {  // Para detectar tanto "p" minúscula como "P" mayúscula
+            console.log("Tecla 'P' presionada");
+            if (!player2Exist) {
+                player2Exist = true;
 
-    // const geometry2 = new THREE.CapsuleGeometry(10, 15, 3, 10);
-    // const material2 = new THREE.MeshBasicMaterial({
-    //     color: '#fffb00'
-    // });
-    // const capsule2 = new THREE.Mesh(geometry2, material2);
+
+                const geometry2 = new THREE.CapsuleGeometry(6, 7, 3, 10);
+                const material2 = new THREE.MeshBasicMaterial({ color: '#3018cb' });
+                const capsule2 = new THREE.Mesh(geometry2, material2); scene.add(capsule2);
+
+                player2 = new CharacterController(capsule2, camera2, 2);
+                player2Col = new Collider(player2.Object3d, 1, 13, 20, 13);
+                const helper5 = new THREE.Box3Helper(player2Col.boxBB, 0xffff00);
+                scene.add(helper5);
+                player2.setCollider(player2Col);
+
+                const g2 = new THREE.BoxGeometry(7, 4, 4);
+                const m2 = new THREE.MeshBasicMaterial({ color: '#8e8e8e' });
+                const cube2 = new THREE.Mesh(g2, m2);
+                cube2.position.set(0, 5, 5);
+                capsule2.add(cube2);
+
+
+                //x, y, z0
+                camera2.position.set(camera.position.x, camera.position.y, camera.position.z);
+                camera2.rotation.set(camera.rotation.x, camera.rotation.y, camera.rotation.z);
+                scene.add(camera2);
+
+                orbitControl2 = new OrbitControls(camera2, renderer.domElement);
+                orbitControl2.maxDistance = 40;
+                orbitControl2.enablePan = false;
+                // cameraControl.maxPolarAngle
+                orbitControl2.minDistance = 20;
+                orbitControl2.target = player2.Object3d.position;
+
+                camera.aspect = aspect2;
+                camera2.aspect = aspect2;
+                camera.updateProjectionMatrix();
+                camera2.updateProjectionMatrix();
+            }
+        }
+    })
 
 }
 
@@ -151,10 +210,34 @@ function Update() {
     player.update(delta, 1, ColArray);
     col.update();
     col2.update();
+
+    if (player2Exist) {
+        player2.update(delta, 1, ColArray);
+        player2Col.update();
+    }
+
+
 }
 
 function Render() {
-    renderer.render(scene, camera);
+    if (player2Exist) {
+        // Configuración para la primera cámara
+        renderer.setViewport(0, window.innerHeight / 2, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissor(0, window.innerHeight / 2, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissorTest(true);
+        renderer.render(scene, camera);
+
+        // Configuración para la segunda cámara
+        renderer.setViewport(0, 0, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissor(0, 0, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissorTest(true);
+        renderer.render(scene, camera2);
+
+        // Desactivar scissor al finalizar
+        renderer.setScissorTest(false);
+    } else {
+        renderer.render(scene, camera);
+    }
 }
 
 Init();

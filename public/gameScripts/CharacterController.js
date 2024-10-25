@@ -5,10 +5,10 @@ import { Collider } from "./Colliders.js";
 
 export class CharacterController {
 
-    constructor(Object3d, camera) {
+    constructor(Object3d, camera, type) {
         this.Object3d = Object3d;
         this.camera = camera;
-        this.input = new InputController();
+        this.input = new InputController(type);
         this.velocity = 60;
         this.currentSpeed = 0;
         this.gravity = true;
@@ -20,7 +20,9 @@ export class CharacterController {
         this.currentYSpeedUp = 0;
 
         this.camForward = new THREE.Vector3(0, 0, 1);
-        this.camera.getWorldDirection(this.camForward);
+        if (this.camera) {
+            this.camera.getWorldDirection(this.camForward);
+        }
         this.camLeft = new THREE.Vector3(0, 0, 0);
 
         this.left.copy(this.forward);
@@ -60,7 +62,7 @@ export class CharacterController {
     checkCollisions(objCol, box) {
 
         if (box.intersectsBox(objCol.boxBB)) {
-            console.log('collides');
+            // console.log('collides');
             return true;
         }
         return false;
@@ -74,7 +76,7 @@ export class CharacterController {
         this.updateForward(move);
 
         let gravity = this.applyGravity(delta);
-        console.log(this.currentYSpeedDown);
+        // console.log(this.currentYSpeedDown);
         move.add(gravity);
 
         //Se añade el movimiento a la posicion actual para calcular la siguiente posicion
@@ -103,14 +105,15 @@ export class CharacterController {
         if (canMove) {
             this.Object3d.position.copy(newPos);
             // this.Object3d.position.add(gravity);
-
-            this.camera.position.add(move);
+            if (this.camera) {
+                this.camera.position.add(move);
+            }
             // this.camera.position.add(gravity);
         } else {
             this.Object3d.position.copy(currentPosition);
         }
 
-        console.log('isGrounded: ' + this.isGrounded + ' CanMove: ' + canMove + ' CanJump: ' + this.canJump);
+        // console.log('isGrounded: ' + this.isGrounded + ' CanMove: ' + canMove + ' CanJump: ' + this.canJump);
     }
 
     getMovement(delta) {
@@ -171,7 +174,9 @@ export class CharacterController {
         }
 
         //Actualizamos vectores de direccion de la camara
-        this.camera.getWorldDirection(this.camForward);
+        if (this.camera) {
+            this.camera.getWorldDirection(this.camForward);
+        }
         this.camForward.y = 0;
         this.camForward.normalize();
 
@@ -197,7 +202,7 @@ export class CharacterController {
         }
 
         if (this.isGrounded) {
-            console.log('0000');
+            // console.log('0000');
             this.currentYSpeedDown = 0;
         }
         return movement;
@@ -243,7 +248,8 @@ export class CharacterController {
             }
 
             movement.y = this.currentYSpeedUp * delta;
-            console.log(this.currentYSpeedUp)
+            console.log(this.currentYSpeedUp);
+
             // console.log(movement);
         }
 

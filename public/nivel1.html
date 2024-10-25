@@ -1,967 +1,969 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nivel 1</title>
-    <style>
-      body {
-        margin: 0;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nivel 1</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+
+<body>
+  <script type="module">
+    import * as THREE from "./gameScripts/three.module.js";
+    import { OrbitControls } from "./gameScripts/OrbitControls.js";
+    import { STLLoader } from "./gameScripts/STLLoader.js";
+    import { GLTFLoader } from "./gameScripts/GLTFLoader.js";
+    import { TextureLoader } from "./gameScripts/three.module.js";
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color("#34495E");
+
+    const camera = new THREE.PerspectiveCamera(
+      60,
+      window.innerWidth / window.innerHeight
+    );
+    camera.position.set(497, 180, 700);
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    const cameraControl = new OrbitControls(camera, renderer.domElement);
+
+    const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+    scene.add(hemisphereLight);
+
+    let starModel;
+
+
+    ///CUBO EN MOVIMIENTO
+    const cube2Geometry = new THREE.BoxGeometry(1, 1, 1);
+    const cube2Material = new THREE.MeshPhongMaterial({ color: "coral" });
+    const cube2 = new THREE.Mesh(cube2Geometry, cube2Material);
+    const cube2BB = new THREE.Box3();
+    cube2.position.set(522, 110, 525);
+    cube2.scale.set(10.5, 10.5, 10.5);
+    cube2BB.setFromObject(cube2);
+
+
+
+    //MAPA NIVEL 1
+
+    //MAPA      
+    const Mapa = new GLTFLoader();
+    Mapa.load(
+      "./recursos/Mapa 1/Terreno/Map1GLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(0, -5, 0);
+        model.scale.set(.8, 0.7, 0.7);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Texturas/Cesped.jpg');
+
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(22, 22);
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
       }
-    </style>
-  </head>
-
-
-  <body>
-    <script type="module">
-      import * as THREE from "./gameScripts/three.module.js";
-      import { OrbitControls } from "./gameScripts/OrbitControls.js";
-      import { STLLoader } from "./gameScripts/STLLoader.js";
-      import { GLTFLoader } from "./gameScripts/GLTFLoader.js";
-      import { TextureLoader } from "./gameScripts/three.module.js";
-
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color("#34495E");
-
-      const camera = new THREE.PerspectiveCamera(
-        60,
-        window.innerWidth / window.innerHeight
-      );
-      camera.position.set(497, 180, 700);
-
-      const renderer = new THREE.WebGLRenderer();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.body.appendChild(renderer.domElement);
-      const cameraControl = new OrbitControls(camera, renderer.domElement);
-
-      const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
-      scene.add(hemisphereLight);
-
-      let starModel;
-
-
-      ///CUBO EN MOVIMIENTO
-      const cube2Geometry = new THREE.BoxGeometry(1, 1, 1);
-      const cube2Material = new THREE.MeshPhongMaterial({ color: "coral" });
-      const cube2 = new THREE.Mesh(cube2Geometry, cube2Material);
-      const cube2BB = new THREE.Box3();
-      cube2.position.set(522, 110, 525);
-      cube2.scale.set(10.5, 10.5, 10.5);  
-      cube2BB.setFromObject(cube2);
+    );
 
 
 
-      //MAPA NIVEL 1
+    //AGUA
+    const river = new THREE.PlaneGeometry(1400, 1400);
+    const textureLoader = new THREE.TextureLoader();
+    const waterTexture = textureLoader.load('./recursos/Mapa 1/Texturas/Water.jpg');
 
-      //MAPA      
-      const Mapa = new GLTFLoader();
-      Mapa.load(
-        "./recursos/Mapa 1/Terreno/Map1GLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(0, -5, 0); 
-          model.scale.set(.8, 0.7, 0.7);    
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Texturas/Cesped.jpg');    
+    waterTexture.wrapS = THREE.RepeatWrapping;
+    waterTexture.wrapT = THREE.RepeatWrapping;
+    waterTexture.repeat.set(8, 8);
 
-          texture.wrapS = THREE.RepeatWrapping; 
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.set(22, 22);
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
+    const planeMaterial = new THREE.MeshBasicMaterial({ map: waterTexture });
+    const plane = new THREE.Mesh(river, planeMaterial);
+    plane.rotation.x = -Math.PI / 2;
+    plane.position.set(0, 45, 0);
+    scene.add(plane);
 
 
 
-      //AGUA
-      const river = new THREE.PlaneGeometry(1400, 1400);
-      const textureLoader = new THREE.TextureLoader();
-      const waterTexture = textureLoader.load('./recursos/Mapa 1/Texturas/Water.jpg'); 
+    //BARRIL      
+    const Barril1 = new GLTFLoader();
+    Barril1.load(
+      "./recursos/Mapa 1/Barrel/BarrilGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(722, 93, 320);
+        model.scale.set(40, 40, 40);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Barrel/barrel_UV.png');
 
-      waterTexture.wrapS = THREE.RepeatWrapping; 
-      waterTexture.wrapT = THREE.RepeatWrapping; 
-      waterTexture.repeat.set(8, 8);
-          
-      const planeMaterial = new THREE.MeshBasicMaterial({ map: waterTexture });
-      const plane = new THREE.Mesh(river, planeMaterial);
-      plane.rotation.x = -Math.PI / 2; 
-      plane.position.set(0, 45, 0); 
-      scene.add(plane);
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
 
-    
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
 
-      //BARRIL      
-      const Barril1 = new GLTFLoader();
-      Barril1.load(
-        "./recursos/Mapa 1/Barrel/BarrilGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(722, 93, 320); 
-          model.scale.set(40, 40, 40);    
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Barrel/barrel_UV.png');   
+        scene.add(model);
+      }
+    );
 
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
+    const Barril2 = new GLTFLoader();
+    Barril2.load(
+      "./recursos/Mapa 1/Barrel/BarrilGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(722, 93, 355);
+        model.scale.set(40, 40, 40);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Barrel/barrel_UV.png');
 
-      const Barril2 = new GLTFLoader();
-      Barril2.load(
-        "./recursos/Mapa 1/Barrel/BarrilGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(722, 93, 355); 
-          model.scale.set(40, 40, 40);    
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Barrel/barrel_UV.png');   
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
 
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
 
 
 
     //CAÑON      
     const Cannon1 = new GLTFLoader();
-      Cannon1.load(
-        "./recursos/Mapa 1/Cannon/CannonGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(722, 90, 400); 
-          model.scale.set(25, 25, 25);              
-          model.rotation.y = (Math.PI / 2); 
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Cannon/Cannon_AlbedoPBR.png');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-      const Cannon2 = new GLTFLoader();
-      Cannon2.load(
-        "./recursos/Mapa 1/Cannon/CannonGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-403, 90, 625); 
-          model.scale.set(25, 25, 25);         
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Cannon/Cannon_AlbedoPBR.png');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-
-
-      //CRISTAL   
-      const Cristal1 = new GLTFLoader();
-      Cristal1.load(
-        "./recursos/Mapa 1/Crystal/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(722, 110, -100); 
-          model.scale.set(15, 15, 15);         
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const Cristal2 = new GLTFLoader();
-      Cristal2.load(
-        "./recursos/Mapa 1/Crystal/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(697, 100, -250); 
-          model.scale.set(15, 15, 15);         
-          model.rotation.y = (Math.PI / 2); 
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const Cristal3 = new GLTFLoader();
-      Cristal3.load(
-        "./recursos/Mapa 1/Crystal/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(522, 110, -600); 
-          model.scale.set(15, 15, 15);       
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const Cristal4 = new GLTFLoader();
-      Cristal4.load(
-        "./recursos/Mapa 1/Crystal/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-653, 110, -375); 
-          model.scale.set(15, 15, 15);         
-          model.rotation.y = (Math.PI / 2); 
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const Cristal5 = new GLTFLoader();
-      Cristal5.load(
-        "./recursos/Mapa 1/Crystal/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-653, 100, -300); 
-          model.scale.set(15, 15, 15);         
-          model.rotation.y = (Math.PI / 2) * 2.3; 
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const Cristal6 = new GLTFLoader();
-      Cristal6.load(
-        "./recursos/Mapa 1/Crystal/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-678, 100, 550); 
-          model.scale.set(15, 15, 15);         
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const Cristal7 = new GLTFLoader();
-      Cristal7.load(
-        "./recursos/Mapa 1/Crystal/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-228, 240, 300); 
-          model.scale.set(15, 15, 15);         
-          model.rotation.y = (Math.PI / 2); 
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const Cristal8 = new GLTFLoader();
-      Cristal8.load(
-        "./recursos/Mapa 1/Crystal/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-148, 290, -175); 
-          model.scale.set(35, 35, 35);         
-          model.rotation.y = (Math.PI / 2); 
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const Cristal9 = new GLTFLoader();
-      Cristal9.load(
-        "./recursos/Mapa 1/Crystal/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(202, 290, -155); 
-          model.scale.set(30, 30, 30);      
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-      
-
-
-      //GLOBO      
-      const Globo = new GLTFLoader();
-      Globo.load(
-        "./recursos/Mapa 1/Globo/GloboGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(422, 185, 600); 
-          model.scale.set(13, 13, 13);    
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Globo/Image_3.png');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-
-
-      //ESTRELLA   
-      const Estrella = new GLTFLoader();
-      Estrella.load(
-        "./recursos/Mapa 1/Gold_Star/StarGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(47, 300, 120); 
-          model.scale.set(50, 50, 50);    
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Gold_Star/texture_gold.jpg');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-          starModel = model;
-        }
-      );
-
-
-
-      //Casa de Hongo 1     
-      const MushHouse1_1 = new GLTFLoader();
-      MushHouse1_1.load(
-        "./recursos/Mapa 1/Mooshroom_House 1/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(422, 92, 600); 
-          model.scale.set(17, 17, 17);
-          model.rotation.y = (Math.PI / 2) * 1.8;     
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const MushHouse1_2 = new GLTFLoader();
-      MushHouse1_2.load(
-        "./recursos/Mapa 1/Mooshroom_House 1/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(697, 92, 525); 
-          model.scale.set(17, 17, 17);
-          model.rotation.y = (Math.PI / 2) * 3;     
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const MushHouse1_3 = new GLTFLoader();
-      MushHouse1_3.load(
-        "./recursos/Mapa 1/Mooshroom_House 1/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-553, 92, 550); 
-          model.scale.set(17, 17, 17);
-          model.rotation.y = (Math.PI / 2) * -2.5;     
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const MushHouse1_4 = new GLTFLoader();
-      MushHouse1_4.load(
-        "./recursos/Mapa 1/Mooshroom_House 1/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-653, 92, -475); 
-          model.scale.set(17, 17, 17);
-          model.rotation.y = (Math.PI / 2);     
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-
-      //Casa de Hongo 2     
-      const MushHouse2_1 = new GLTFLoader();
-      MushHouse2_1.load(
-        "./recursos/Mapa 1/Mooshroom_House 2/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-353, 260, -25); 
-          model.scale.set(60, 60, 60);             
-          model.rotation.y = (Math.PI / 2);   
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const MushHouse2_2 = new GLTFLoader();
-      MushHouse2_2.load(
-        "./recursos/Mapa 1/Mooshroom_House 2/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(697, 140, -325); 
-          model.scale.set(60, 60, 60);             
-          model.rotation.y = (Math.PI / 2);   
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const MushHouse2_3 = new GLTFLoader();
-      MushHouse2_3.load(
-        "./recursos/Mapa 1/Mooshroom_House 2/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(720, 100, -175); 
-          model.scale.set(60, 60, 60);             
-          model.rotation.y = (Math.PI / 2);   
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-
-
-      //Casa de Hongo 3     
-      const MushHouse3_1 = new GLTFLoader();
-      MushHouse3_1.load(
-        "./recursos/Mapa 1/Mooshroom_House 3/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-303, 90, 600); 
-          model.scale.set(30, 30, 30);    
-          model.rotation.y = (Math.PI / 2);   
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const MushHouse3_2 = new GLTFLoader();
-      MushHouse3_2.load(
-        "./recursos/Mapa 1/Mooshroom_House 3/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(672, 90, -525); 
-          model.scale.set(30, 30, 30);    
-          model.rotation.y = (Math.PI / 2) * -1.5;   
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const MushHouse3_3 = new GLTFLoader();
-      MushHouse3_3.load(
-        "./recursos/Mapa 1/Mooshroom_House 3/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(572, 90, 600); 
-          model.scale.set(30, 30, 30);     
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-
-
-      //Casa de Hongo 4     
-      const MushHouse4_1 = new GLTFLoader();
-      MushHouse4_1.load(
-        "./recursos/Mapa 1/Mooshroom_House 4/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-650, 180, 100); 
-          model.scale.set(105, 105, 105);          
-          model.rotation.y = (Math.PI / 2) * -1;   
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const MushHouse4_2 = new GLTFLoader();
-      MushHouse4_2.load(
-        "./recursos/Mapa 1/Mooshroom_House 4/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-650, 180, -25); 
-          model.scale.set(105, 105, 105);          
-          model.rotation.y = (Math.PI / 2) * -1;   
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const MushHouse4_3 = new GLTFLoader();
-      MushHouse4_3.load(
-        "./recursos/Mapa 1/Mooshroom_House 4/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-650, 180, -200); 
-          model.scale.set(105, 105, 105);          
-          model.rotation.y = (Math.PI / 2) * -1;   
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const MushHouse4_4 = new GLTFLoader();
-      MushHouse4_4.load(
-        "./recursos/Mapa 1/Mooshroom_House 4/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(722, 200, 150); 
-          model.scale.set(105, 105, 105);          
-          model.rotation.y = (Math.PI / 2);   
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-
-
-      //Casa de Hongo 5     
-      const MushHouse5_1 = new GLTFLoader();
-      MushHouse5_1.load(
-        "./recursos/Mapa 1/Mooshroom_House 5/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-403, 95, -575); 
-          model.scale.set(12, 12, 12);              
-          model.rotation.y = (Math.PI / 2) * 0.2;   
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-      const MushHouse5_2 = new GLTFLoader();
-      MushHouse5_2.load(
-        "./recursos/Mapa 1/Mooshroom_House 5/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-678, 87, 300); 
-          model.scale.set(12, 12, 12);              
-          model.rotation.y = (Math.PI / 2);   
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-      
-
-
-      //HONGO
-      const Hongo1 = new GLTFLoader();
-      Hongo1.load(
-        "./recursos/Mapa 1/Mushroom/MushGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(722, 95, 275); 
-          model.scale.set(8, 8, 8);    
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Mushroom/Image_3.png');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-      const Hongo2 = new GLTFLoader();
-      Hongo2.load(
-        "./recursos/Mapa 1/Mushroom/MushGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(172, 85, -540); 
-          model.scale.set(8, 8, 8);    
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Mushroom/Image_3.png');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-      const Hongo3 = new GLTFLoader();
-      Hongo3.load(
-        "./recursos/Mapa 1/Mushroom/MushGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-678, 90, 475); 
-          model.scale.set(8, 8, 8);    
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Mushroom/Image_3.png');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-      const Hongo4 = new GLTFLoader();
-      Hongo4.load(
-        "./recursos/Mapa 1/Mushroom/MushGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-253, 270, 0); 
-          model.scale.set(8, 8, 8);    
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Mushroom/Image_3.png');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-      const Hongo5 = new GLTFLoader();
-      Hongo5.load(
-        "./recursos/Mapa 1/Mushroom/MushGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(322, 260, 75); 
-          model.scale.set(8, 8, 8);    
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Mushroom/Image_3.png');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-
-
-      //TUBERIAS 
-      const Pipe1 = new GLTFLoader();
-      Pipe1.load(
-        "./recursos/Mapa 1/Pipes/TubosGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(-50, 82, 575); 
-          model.scale.set(45, 45, 45);              
-          model.rotation.y = (Math.PI / 2) * 0.3;  
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Pipes/RUS_CET_drum_BM.png');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-      const Pipe2 = new GLTFLoader();
-      Pipe2.load(
-        "./recursos/Mapa 1/Pipes/TubosGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(722, 82, 0); 
-          model.scale.set(45, 45, 45);              
-          model.rotation.y = (Math.PI / 2);  
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Pipes/RUS_CET_drum_BM.png');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-      const Pipe3 = new GLTFLoader();
-      Pipe3.load(
-        "./recursos/Mapa 1/Pipes/TubosGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(47, 260, -150); 
-          model.scale.set(45, 45, 45);            
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Pipes/RUS_CET_drum_BM.png');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-
-
-      //SEÑAL      
-      const Senal = new GLTFLoader();
-      Senal.load(
-        "./recursos/Mapa 1/SignBoard/SenialGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(272, 250, 175); 
-          model.scale.set(25, 25, 25);      
-          model.rotation.y = (Math.PI / 2);   
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/SignBoard/ColorSenial.png');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-
-
-      //FLECHA      
-      const Flecha1 = new GLTFLoader();
-      Flecha1.load(
-        "./recursos/Mapa 1/Wooden_Sign/FlechaGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(397, 70, -550); 
-          model.scale.set(50, 50, 50);    
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Wooden_Sign/Chocofur_free_01_wood_diff.jpg');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-      const Flecha2 = new GLTFLoader();
-      Flecha2.load(
-        "./recursos/Mapa 1/Wooden_Sign/FlechaGLTF.glb",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(97, 70, 550); 
-          model.scale.set(50, 50, 50);            
-          model.rotation.y = (-Math.PI / 2);     
-          const textureLoader = new THREE.TextureLoader();
-          const texture = textureLoader.load('./recursos/Mapa 1/Wooden_Sign/Chocofur_free_01_wood_spec.jpg');   
-
-          texture.wrapT = THREE.RepeatWrapping; 
-          texture.repeat.y = -1; 
-      
-          model.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = texture; 
-              child.material.needsUpdate = true; 
-            }
-          });
-      
-          scene.add(model);
-        }
-      );
-
-
-
-      //TORRE   
-      const Torre = new GLTFLoader();
-      Torre.load(
-        "./recursos/Mapa 1/Torre/scene.gltf",
-        function (gltf) {
-          const model = gltf.scene;
-          model.position.set(47, 460, -25); 
-          model.scale.set(35, 35, 35);    
-          const textureLoader = new THREE.TextureLoader();
-      
-          scene.add(model);
-        }
-      );
-
-
-
-
-
-      ///INPUTS PARA MOVERSE
-      scene.add(cube2);
-      let time = 0;
-
-      document.onkeydown = function (e) {
-        if (e.keyCode == 37) {
-          cube2.position.x = cube2.position.x - 25;
-        }
-        if (e.keyCode == 38){
-          cube2.position.z = cube2.position.z - 25;
-        }   
-        if (e.keyCode == 39) {
-          cube2.position.x = cube2.position.x + 25;
-        }     
-        if (e.keyCode == 40){
-          cube2.position.z = cube2.position.z + 25;
-        }
-      };
-
-      
-
-      function animate() {
-
-        cube2BB
-          .copy(cube2.geometry.boundingBox)
-          .applyMatrix4(cube2.matrixWorld);
-        renderer.render(scene, camera);
-
-        //Posicion del cubo
-        console.log(`Cubo posición - X: ${cube2.position.x}, Y: ${cube2.position.y}, Z: ${cube2.position.z}`);
-
-        //Animacion agua
-        time += 0.01;
-        waterTexture.offset.y = time * -0.2;
-        waterTexture.offset.x = time * -0.1;
-
-        //Animacion de estrella
-        if (starModel) {
-            starModel.rotation.y += 0.03; 
-        }
-
-        requestAnimationFrame(animate);
+    Cannon1.load(
+      "./recursos/Mapa 1/Cannon/CannonGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(722, 90, 400);
+        model.scale.set(25, 25, 25);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Cannon/Cannon_AlbedoPBR.png');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+    const Cannon2 = new GLTFLoader();
+    Cannon2.load(
+      "./recursos/Mapa 1/Cannon/CannonGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-403, 90, 625);
+        model.scale.set(25, 25, 25);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Cannon/Cannon_AlbedoPBR.png');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+
+
+    //CRISTAL   
+    const Cristal1 = new GLTFLoader();
+    Cristal1.load(
+      "./recursos/Mapa 1/Crystal/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(722, 110, -100);
+        model.scale.set(15, 15, 15);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const Cristal2 = new GLTFLoader();
+    Cristal2.load(
+      "./recursos/Mapa 1/Crystal/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(697, 100, -250);
+        model.scale.set(15, 15, 15);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const Cristal3 = new GLTFLoader();
+    Cristal3.load(
+      "./recursos/Mapa 1/Crystal/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(522, 110, -600);
+        model.scale.set(15, 15, 15);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const Cristal4 = new GLTFLoader();
+    Cristal4.load(
+      "./recursos/Mapa 1/Crystal/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-653, 110, -375);
+        model.scale.set(15, 15, 15);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const Cristal5 = new GLTFLoader();
+    Cristal5.load(
+      "./recursos/Mapa 1/Crystal/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-653, 100, -300);
+        model.scale.set(15, 15, 15);
+        model.rotation.y = (Math.PI / 2) * 2.3;
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const Cristal6 = new GLTFLoader();
+    Cristal6.load(
+      "./recursos/Mapa 1/Crystal/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-678, 100, 550);
+        model.scale.set(15, 15, 15);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const Cristal7 = new GLTFLoader();
+    Cristal7.load(
+      "./recursos/Mapa 1/Crystal/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-228, 240, 300);
+        model.scale.set(15, 15, 15);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const Cristal8 = new GLTFLoader();
+    Cristal8.load(
+      "./recursos/Mapa 1/Crystal/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-148, 290, -175);
+        model.scale.set(35, 35, 35);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const Cristal9 = new GLTFLoader();
+    Cristal9.load(
+      "./recursos/Mapa 1/Crystal/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(202, 290, -155);
+        model.scale.set(30, 30, 30);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+
+
+    //GLOBO      
+    const Globo = new GLTFLoader();
+    Globo.load(
+      "./recursos/Mapa 1/Globo/GloboGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(422, 185, 600);
+        model.scale.set(13, 13, 13);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Globo/Image_3.png');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+
+
+    //ESTRELLA   
+    const Estrella = new GLTFLoader();
+    Estrella.load(
+      "./recursos/Mapa 1/Gold_Star/StarGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(47, 300, 120);
+        model.scale.set(50, 50, 50);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Gold_Star/texture_gold.jpg');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+        starModel = model;
+      }
+    );
+
+
+
+    //Casa de Hongo 1     
+    const MushHouse1_1 = new GLTFLoader();
+    MushHouse1_1.load(
+      "./recursos/Mapa 1/Mooshroom_House 1/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(422, 92, 600);
+        model.scale.set(17, 17, 17);
+        model.rotation.y = (Math.PI / 2) * 1.8;
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const MushHouse1_2 = new GLTFLoader();
+    MushHouse1_2.load(
+      "./recursos/Mapa 1/Mooshroom_House 1/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(697, 92, 525);
+        model.scale.set(17, 17, 17);
+        model.rotation.y = (Math.PI / 2) * 3;
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const MushHouse1_3 = new GLTFLoader();
+    MushHouse1_3.load(
+      "./recursos/Mapa 1/Mooshroom_House 1/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-553, 92, 550);
+        model.scale.set(17, 17, 17);
+        model.rotation.y = (Math.PI / 2) * -2.5;
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const MushHouse1_4 = new GLTFLoader();
+    MushHouse1_4.load(
+      "./recursos/Mapa 1/Mooshroom_House 1/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-653, 92, -475);
+        model.scale.set(17, 17, 17);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+
+    //Casa de Hongo 2     
+    const MushHouse2_1 = new GLTFLoader();
+    MushHouse2_1.load(
+      "./recursos/Mapa 1/Mooshroom_House 2/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-353, 260, -25);
+        model.scale.set(60, 60, 60);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const MushHouse2_2 = new GLTFLoader();
+    MushHouse2_2.load(
+      "./recursos/Mapa 1/Mooshroom_House 2/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(697, 140, -325);
+        model.scale.set(60, 60, 60);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const MushHouse2_3 = new GLTFLoader();
+    MushHouse2_3.load(
+      "./recursos/Mapa 1/Mooshroom_House 2/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(720, 100, -175);
+        model.scale.set(60, 60, 60);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+
+
+    //Casa de Hongo 3     
+    const MushHouse3_1 = new GLTFLoader();
+    MushHouse3_1.load(
+      "./recursos/Mapa 1/Mooshroom_House 3/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-303, 90, 600);
+        model.scale.set(30, 30, 30);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const MushHouse3_2 = new GLTFLoader();
+    MushHouse3_2.load(
+      "./recursos/Mapa 1/Mooshroom_House 3/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(672, 90, -525);
+        model.scale.set(30, 30, 30);
+        model.rotation.y = (Math.PI / 2) * -1.5;
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const MushHouse3_3 = new GLTFLoader();
+    MushHouse3_3.load(
+      "./recursos/Mapa 1/Mooshroom_House 3/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(572, 90, 600);
+        model.scale.set(30, 30, 30);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+
+
+    //Casa de Hongo 4     
+    const MushHouse4_1 = new GLTFLoader();
+    MushHouse4_1.load(
+      "./recursos/Mapa 1/Mooshroom_House 4/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-650, 180, 100);
+        model.scale.set(105, 105, 105);
+        model.rotation.y = (Math.PI / 2) * -1;
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const MushHouse4_2 = new GLTFLoader();
+    MushHouse4_2.load(
+      "./recursos/Mapa 1/Mooshroom_House 4/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-650, 180, -25);
+        model.scale.set(105, 105, 105);
+        model.rotation.y = (Math.PI / 2) * -1;
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const MushHouse4_3 = new GLTFLoader();
+    MushHouse4_3.load(
+      "./recursos/Mapa 1/Mooshroom_House 4/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-650, 180, -200);
+        model.scale.set(105, 105, 105);
+        model.rotation.y = (Math.PI / 2) * -1;
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const MushHouse4_4 = new GLTFLoader();
+    MushHouse4_4.load(
+      "./recursos/Mapa 1/Mooshroom_House 4/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(722, 200, 150);
+        model.scale.set(105, 105, 105);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+
+
+    //Casa de Hongo 5     
+    const MushHouse5_1 = new GLTFLoader();
+    MushHouse5_1.load(
+      "./recursos/Mapa 1/Mooshroom_House 5/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-403, 95, -575);
+        model.scale.set(12, 12, 12);
+        model.rotation.y = (Math.PI / 2) * 0.2;
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+    const MushHouse5_2 = new GLTFLoader();
+    MushHouse5_2.load(
+      "./recursos/Mapa 1/Mooshroom_House 5/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-678, 87, 300);
+        model.scale.set(12, 12, 12);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+
+
+    //HONGO
+    const Hongo1 = new GLTFLoader();
+    Hongo1.load(
+      "./recursos/Mapa 1/Mushroom/MushGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(722, 95, 275);
+        model.scale.set(8, 8, 8);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Mushroom/Image_3.png');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+    const Hongo2 = new GLTFLoader();
+    Hongo2.load(
+      "./recursos/Mapa 1/Mushroom/MushGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(172, 85, -540);
+        model.scale.set(8, 8, 8);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Mushroom/Image_3.png');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+    const Hongo3 = new GLTFLoader();
+    Hongo3.load(
+      "./recursos/Mapa 1/Mushroom/MushGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-678, 90, 475);
+        model.scale.set(8, 8, 8);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Mushroom/Image_3.png');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+    const Hongo4 = new GLTFLoader();
+    Hongo4.load(
+      "./recursos/Mapa 1/Mushroom/MushGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-253, 270, 0);
+        model.scale.set(8, 8, 8);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Mushroom/Image_3.png');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+    const Hongo5 = new GLTFLoader();
+    Hongo5.load(
+      "./recursos/Mapa 1/Mushroom/MushGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(322, 260, 75);
+        model.scale.set(8, 8, 8);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Mushroom/Image_3.png');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+
+
+    //TUBERIAS 
+    const Pipe1 = new GLTFLoader();
+    Pipe1.load(
+      "./recursos/Mapa 1/Pipes/TubosGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(-50, 82, 575);
+        model.scale.set(45, 45, 45);
+        model.rotation.y = (Math.PI / 2) * 0.3;
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Pipes/RUS_CET_drum_BM.png');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+    const Pipe2 = new GLTFLoader();
+    Pipe2.load(
+      "./recursos/Mapa 1/Pipes/TubosGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(722, 82, 0);
+        model.scale.set(45, 45, 45);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Pipes/RUS_CET_drum_BM.png');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+    const Pipe3 = new GLTFLoader();
+    Pipe3.load(
+      "./recursos/Mapa 1/Pipes/TubosGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(47, 260, -150);
+        model.scale.set(45, 45, 45);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Pipes/RUS_CET_drum_BM.png');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+
+
+    //SEÑAL      
+    const Senal = new GLTFLoader();
+    Senal.load(
+      "./recursos/Mapa 1/SignBoard/SenialGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(272, 250, 175);
+        model.scale.set(25, 25, 25);
+        model.rotation.y = (Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/SignBoard/ColorSenial.png');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+
+
+    //FLECHA      
+    const Flecha1 = new GLTFLoader();
+    Flecha1.load(
+      "./recursos/Mapa 1/Wooden_Sign/FlechaGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(397, 70, -550);
+        model.scale.set(50, 50, 50);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Wooden_Sign/Chocofur_free_01_wood_diff.jpg');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+    const Flecha2 = new GLTFLoader();
+    Flecha2.load(
+      "./recursos/Mapa 1/Wooden_Sign/FlechaGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(97, 70, 550);
+        model.scale.set(50, 50, 50);
+        model.rotation.y = (-Math.PI / 2);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Wooden_Sign/Chocofur_free_01_wood_spec.jpg');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+      }
+    );
+
+
+
+    //TORRE   
+    const Torre = new GLTFLoader();
+    Torre.load(
+      "./recursos/Mapa 1/Torre/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(47, 460, -25);
+        model.scale.set(35, 35, 35);
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+      }
+    );
+
+
+
+
+
+    ///INPUTS PARA MOVERSE
+    scene.add(cube2);
+    let time = 0;
+
+    document.onkeydown = function (e) {
+      if (e.keyCode == 37) {
+        cube2.position.x = cube2.position.x - 25;
+      }
+      if (e.keyCode == 38) {
+        cube2.position.z = cube2.position.z - 25;
+      }
+      if (e.keyCode == 39) {
+        cube2.position.x = cube2.position.x + 25;
+      }
+      if (e.keyCode == 40) {
+        cube2.position.z = cube2.position.z + 25;
+      }
+    };
+
+
+
+    function animate() {
+
+      cube2BB
+        .copy(cube2.geometry.boundingBox)
+        .applyMatrix4(cube2.matrixWorld);
+      renderer.render(scene, camera);
+
+      //Posicion del cubo
+      console.log(`Cubo posición - X: ${cube2.position.x}, Y: ${cube2.position.y}, Z: ${cube2.position.z}`);
+
+      //Animacion agua
+      time += 0.01;
+      waterTexture.offset.y = time * -0.2;
+      waterTexture.offset.x = time * -0.1;
+
+      //Animacion de estrella
+      if (starModel) {
+        starModel.rotation.y += 0.03;
       }
 
-      animate();
-    </script>
-  </body>
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+
 </html>
