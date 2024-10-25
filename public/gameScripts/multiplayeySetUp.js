@@ -1,5 +1,5 @@
 import * as THREE from "../three.module.js";
-import { scene } from '../gameScripts/levelScript.js';
+// import { scene } from '../gameScripts/levelScript.js';
 import socket from "../gameScripts/socket-connection.js";
 
 
