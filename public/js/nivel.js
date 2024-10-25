@@ -1,4 +1,4 @@
-let modoActual = true;
+let modoActual = 0;
 let selectedLevel = 1;
 
 const modo = document.getElementById("gameMode");
@@ -16,18 +16,24 @@ const DescripcionNivewl = {
 };
 
 
-leftTor.addEventListener("click", () => changeMode());
-rightTor.addEventListener("click", () => changeMode());
+leftTor.addEventListener("click", () => changeMode(-1));
+rightTor.addEventListener("click", () => changeMode(1));
 
-function changeMode() {
+function changeMode(direction) {
 
-    if (modoActual === true) {
-        modo.textContent = `Modo Contrarreloj`;
-        modoActual = false;
-    }
-    else {
-        modo.textContent = `Modo Historia`;
-        modoActual = true;
+    modoActual = (modoActual + direction + 3) % 3;
+
+    switch (modoActual){
+
+        case 0:
+            modo.textContent = "Modo Historia";
+            break;
+        case 1:
+            modo.textContent = "Modo Contrarreloj";
+            break;
+        case 2:
+        modo.textContent = "Modo Multijugador";
+        break;
     }
 
 }
@@ -56,7 +62,20 @@ function selectLevel(level) {
 
 
 jugar.addEventListener("click", () => {
-    window.location.href = "game.html";
+    let game_;
+
+    if (modoActual === 0) { 
+        game_ = `nivel${selectedLevel}_historia.html`;
+    } 
+    else if (modoActual === 1) { 
+        game_ = `nivel${selectedLevel}_contrarreloj.html`;
+    } 
+    else if (modoActual === 2) { 
+        game_ = `nivel${selectedLevel}_multijugador.html`;
+    }
+
+    window.location.href = game_;
+
 });
 
 menu.addEventListener("click", () => {
