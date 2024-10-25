@@ -64,15 +64,19 @@ function selectLevel(level) {
 jugar.addEventListener("click", () => {
     let game_;
 
-    if (modoActual === 0) { 
-        game_ = `nivel${selectedLevel}_historia.html`;
-    } 
-    else if (modoActual === 1) { 
-        game_ = `nivel${selectedLevel}_contrarreloj.html`;
-    } 
-    else if (modoActual === 2) { 
-        game_ = `nivel${selectedLevel}_multijugador.html`;
-    }
+    game_ = `nivel${selectedLevel}.html`;
+
+
+    //Esto se agregara en un futuro para definir modo de juego y nivel
+    // if (modoActual === 0) { 
+    //     game_ = `nivel${selectedLevel}_historia.html`;
+    // } 
+    // else if (modoActual === 1) { 
+    //     game_ = `nivel${selectedLevel}_contrarreloj.html`;
+    // } 
+    // else if (modoActual === 2) { 
+    //     game_ = `nivel${selectedLevel}_multijugador.html`;
+    // }
 
     window.location.href = game_;
 
