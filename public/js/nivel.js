@@ -64,7 +64,12 @@ function selectLevel(level) {
 jugar.addEventListener("click", () => {
     let game_;
 
-    game_ = `nivel${selectedLevel}.html`;
+    if (modoActual === 2) {
+        game_ = `game.html`;
+    }
+    else {
+        game_ = `nivel${selectedLevel}.html`;
+    }
 
 
     //Esto se agregara en un futuro para definir modo de juego y nivel
