@@ -126,3 +126,13 @@ input[type="range"]::-webkit-slider-thumb {
     transform: translate(40px, 30px);
     cursor: pointer;
 }
+
+.property.input {
+    width: 100%;
+    text-align: left;
+}
+
+#commentButton {
+    width: 100%;
+    margin-top: 10px;
+}
