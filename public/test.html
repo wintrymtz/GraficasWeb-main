@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nivel 2</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "./three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from "./gameScripts/three.module.js";
+        import { OrbitControls } from "./gameScripts/OrbitControls.js";
+        import { STLLoader } from "./gameScripts/STLLoader.js";
+        import { GLTFLoader } from "./gameScripts/GLTFLoader.js";
+        import { FBXLoader } from "./gameScripts/FBXLoader.js";
+        import { TextureLoader } from "./gameScripts/three.module.js";
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color("#34495E");
+
+        const camera = new THREE.PerspectiveCamera(
+            60,
+            window.innerWidth / window.innerHeight
+        );
+        camera.position.set(497, 180, 700);
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        const cameraControl = new OrbitControls(camera, renderer.domElement);
+
+        const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+        scene.add(hemisphereLight);
+
+
+        ///CUBO EN MOVIMIENTO
+        const cube2Geometry = new THREE.BoxGeometry(1, 1, 1);
+        const cube2Material = new THREE.MeshPhongMaterial({ color: "coral" });
+        const cube2 = new THREE.Mesh(cube2Geometry, cube2Material);
+        const cube2BB = new THREE.Box3();
+        cube2.position.set(522, 110, 525);
+        cube2.scale.set(10.5, 10.5, 10.5);
+        cube2BB.setFromObject(cube2);
+
+
+
+        //MAPA NIVEL 1
+
+        // //MAPA      
+        // const Mapa = new GLTFLoader();
+        // Mapa.load(
+        //   "./recursos/Mapa 1/Terreno/Map1GLTF.glb",
+        //   function (gltf) {
+        //     const model = gltf.scene;
+        //     model.position.set(0, -5, 0);
+        //     model.scale.set(.8, 0.7, 0.7);
+        //     const textureLoader = new THREE.TextureLoader();
+        //     const texture = textureLoader.load('./recursos/Mapa 1/Texturas/Cesped.jpg');
+
+        //     texture.wrapS = THREE.RepeatWrapping;
+        //     texture.wrapT = THREE.RepeatWrapping;
+        //     texture.repeat.set(22, 22);
+
+        //     model.traverse((child) => {
+        //       if (child.isMesh) {
+        //         child.material.map = texture;
+        //         child.material.needsUpdate = true;
+        //       }
+        //     });
+
+        //     scene.add(model);
+        //   }
+        // );
+
+
+
+
+        // // Cargar y agregar modelo OBJ
+        // const objLoader = new OBJLoader();
+        // objLoader.load(
+        //   "./recursos/map2/map2.obj",
+        //   function (obj) {
+        //     //obj.position.set(50, 0, 50); // Ajusta la posición
+        //     //obj.scale.set(5, 5, 5); // Ajusta la escala
+        //     scene.add(obj);
+        //   }
+        // );
+
+
+
+
+
+
+        ///INPUTS PARA MOVERSE
+        scene.add(cube2);
+        let time = 0;
+
+        document.onkeydown = function (e) {
+            if (e.keyCode == 37) {
+                cube2.position.x = cube2.position.x - 25;
+            }
+            if (e.keyCode == 38) {
+                cube2.position.z = cube2.position.z - 25;
+            }
+            if (e.keyCode == 39) {
+                cube2.position.x = cube2.position.x + 25;
+            }
+            if (e.keyCode == 40) {
+                cube2.position.z = cube2.position.z + 25;
+            }
+        };
+
+
+
+        function animate() {
+
+            cube2BB
+                .copy(cube2.geometry.boundingBox)
+                .applyMatrix4(cube2.matrixWorld);
+            renderer.render(scene, camera);
+
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+
+</html>

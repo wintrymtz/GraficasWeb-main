@@ -1,6 +1,6 @@
 import * as THREE from "../three.module.js";
 import { InputController } from "./InputController.js";
-import socket from "./socket-connection.js";
+// import socket from "./socket-connection.js";
 import { Collider } from "./Colliders.js";
 
 export class CharacterController {
@@ -170,7 +170,7 @@ export class CharacterController {
             // console.log(this.forward);
             this.forward.set(newForward.x, newForward.y, newForward.z);
 
-            socket.emit("updatePlayer", this.Object3d.position, 1);
+            // socket.emit("updatePlayer", this.Object3d.position, 1);
         }
 
         //Actualizamos vectores de direccion de la camara
