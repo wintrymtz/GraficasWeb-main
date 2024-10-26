@@ -12,9 +12,9 @@ const _targetPosition = new Vector3();
 
 class FirstPersonControls extends Controls {
 
-	constructor( object, domElement = null ) {
+	constructor(object, domElement = null) {
 
-		super( object, domElement );
+		super(object, domElement);
 
 		// API
 
@@ -57,16 +57,16 @@ class FirstPersonControls extends Controls {
 
 		// event listeners
 
-		this._onPointerMove = onPointerMove.bind( this );
-		this._onPointerDown = onPointerDown.bind( this );
-		this._onPointerUp = onPointerUp.bind( this );
-		this._onContextMenu = onContextMenu.bind( this );
-		this._onKeyDown = onKeyDown.bind( this );
-		this._onKeyUp = onKeyUp.bind( this );
+		this._onPointerMove = onPointerMove.bind(this);
+		this._onPointerDown = onPointerDown.bind(this);
+		this._onPointerUp = onPointerUp.bind(this);
+		this._onContextMenu = onContextMenu.bind(this);
+		this._onKeyDown = onKeyDown.bind(this);
+		this._onKeyUp = onKeyUp.bind(this);
 
 		//
 
-		if ( domElement !== null ) {
+		if (domElement !== null) {
 
 			this.connect();
 
@@ -80,25 +80,25 @@ class FirstPersonControls extends Controls {
 
 	connect() {
 
-		window.addEventListener( 'keydown', this._onKeyDown );
-		window.addEventListener( 'keyup', this._onKeyUp );
+		window.addEventListener('keydown', this._onKeyDown);
+		window.addEventListener('keyup', this._onKeyUp);
 
-		this.domElement.addEventListener( 'pointermove', this._onPointerMove );
-		this.domElement.addEventListener( 'pointerdown', this._onPointerDown );
-		this.domElement.addEventListener( 'pointerup', this._onPointerUp );
-		this.domElement.addEventListener( 'contextmenu', this._onContextMenu );
+		this.domElement.addEventListener('pointermove', this._onPointerMove);
+		this.domElement.addEventListener('pointerdown', this._onPointerDown);
+		this.domElement.addEventListener('pointerup', this._onPointerUp);
+		this.domElement.addEventListener('contextmenu', this._onContextMenu);
 
 	}
 
 	disconnect() {
 
-		window.removeEventListener( 'keydown', this._onKeyDown );
-		window.removeEventListener( 'keyup', this._onKeyUp );
+		window.removeEventListener('keydown', this._onKeyDown);
+		window.removeEventListener('keyup', this._onKeyUp);
 
-		this.domElement.removeEventListener( 'pointerdown', this._onPointerMove );
-		this.domElement.removeEventListener( 'pointermove', this._onPointerDown );
-		this.domElement.removeEventListener( 'pointerup', this._onPointerUp );
-		this.domElement.removeEventListener( 'contextmenu', this._onContextMenu );
+		this.domElement.removeEventListener('pointerdown', this._onPointerMove);
+		this.domElement.removeEventListener('pointermove', this._onPointerDown);
+		this.domElement.removeEventListener('pointerup', this._onPointerUp);
+		this.domElement.removeEventListener('contextmenu', this._onContextMenu);
 
 	}
 
@@ -110,7 +110,7 @@ class FirstPersonControls extends Controls {
 
 	handleResize() {
 
-		if ( this.domElement === document ) {
+		if (this.domElement === document) {
 
 			this._viewHalfX = window.innerWidth / 2;
 			this._viewHalfY = window.innerHeight / 2;
@@ -124,19 +124,19 @@ class FirstPersonControls extends Controls {
 
 	}
 
-	lookAt( x, y, z ) {
+	lookAt(x, y, z) {
 
-		if ( x.isVector3 ) {
+		if (x.isVector3) {
 
-			_target.copy( x );
+			_target.copy(x);
 
 		} else {
 
-			_target.set( x, y, z );
+			_target.set(x, y, z);
 
 		}
 
-		this.object.lookAt( _target );
+		this.object.lookAt(_target);
 
 		this._setOrientation();
 
@@ -144,16 +144,16 @@ class FirstPersonControls extends Controls {
 
 	}
 
-	update( delta ) {
+	update(delta) {
 
-		if ( this.enabled === false ) return;
+		if (this.enabled === false) return;
 
-		if ( this.heightSpeed ) {
+		if (this.heightSpeed) {
 
-			const y = MathUtils.clamp( this.object.position.y, this.heightMin, this.heightMax );
+			const y = MathUtils.clamp(this.object.position.y, this.heightMin, this.heightMax);
 			const heightDelta = y - this.heightMin;
 
-			this._autoSpeedFactor = delta * ( heightDelta * this.heightCoef );
+			this._autoSpeedFactor = delta * (heightDelta * this.heightCoef);
 
 		} else {
 
@@ -163,18 +163,18 @@ class FirstPersonControls extends Controls {
 
 		const actualMoveSpeed = delta * this.movementSpeed;
 
-		if ( this._moveForward || ( this.autoForward && ! this._moveBackward ) ) this.object.translateZ( - ( actualMoveSpeed + this._autoSpeedFactor ) );
-		if ( this._moveBackward ) this.object.translateZ( actualMoveSpeed );
+		if (this._moveForward || (this.autoForward && !this._moveBackward)) this.object.translateZ(- (actualMoveSpeed + this._autoSpeedFactor));
+		if (this._moveBackward) this.object.translateZ(actualMoveSpeed);
 
-		if ( this._moveLeft ) this.object.translateX( - actualMoveSpeed );
-		if ( this._moveRight ) this.object.translateX( actualMoveSpeed );
+		if (this._moveLeft) this.object.translateX(- actualMoveSpeed);
+		if (this._moveRight) this.object.translateX(actualMoveSpeed);
 
-		if ( this._moveUp ) this.object.translateY( actualMoveSpeed );
-		if ( this._moveDown ) this.object.translateY( - actualMoveSpeed );
+		if (this._moveUp) this.object.translateY(actualMoveSpeed);
+		if (this._moveDown) this.object.translateY(- actualMoveSpeed);
 
 		let actualLookSpeed = delta * this.lookSpeed;
 
-		if ( ! this.activeLook ) {
+		if (!this.activeLook) {
 
 			actualLookSpeed = 0;
 
@@ -182,31 +182,31 @@ class FirstPersonControls extends Controls {
 
 		let verticalLookRatio = 1;
 
-		if ( this.constrainVertical ) {
+		if (this.constrainVertical) {
 
-			verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
+			verticalLookRatio = Math.PI / (this.verticalMax - this.verticalMin);
 
 		}
 
 		this._lon -= this._pointerX * actualLookSpeed;
-		if ( this.lookVertical ) this._lat -= this._pointerY * actualLookSpeed * verticalLookRatio;
+		if (this.lookVertical) this._lat -= this._pointerY * actualLookSpeed * verticalLookRatio;
 
-		this._lat = Math.max( - 85, Math.min( 85, this._lat ) );
+		this._lat = Math.max(- 85, Math.min(85, this._lat));
 
-		let phi = MathUtils.degToRad( 90 - this._lat );
-		const theta = MathUtils.degToRad( this._lon );
+		let phi = MathUtils.degToRad(90 - this._lat);
+		const theta = MathUtils.degToRad(this._lon);
 
-		if ( this.constrainVertical ) {
+		if (this.constrainVertical) {
 
-			phi = MathUtils.mapLinear( phi, 0, Math.PI, this.verticalMin, this.verticalMax );
+			phi = MathUtils.mapLinear(phi, 0, Math.PI, this.verticalMin, this.verticalMax);
 
 		}
 
 		const position = this.object.position;
 
-		_targetPosition.setFromSphericalCoords( 1, phi, theta ).add( position );
+		_targetPosition.setFromSphericalCoords(1, phi, theta).add(position);
 
-		this.object.lookAt( _targetPosition );
+		this.object.lookAt(_targetPosition);
 
 	}
 
@@ -214,27 +214,27 @@ class FirstPersonControls extends Controls {
 
 		const quaternion = this.object.quaternion;
 
-		_lookDirection.set( 0, 0, - 1 ).applyQuaternion( quaternion );
-		_spherical.setFromVector3( _lookDirection );
+		_lookDirection.set(0, 0, - 1).applyQuaternion(quaternion);
+		_spherical.setFromVector3(_lookDirection);
 
-		this._lat = 90 - MathUtils.radToDeg( _spherical.phi );
-		this._lon = MathUtils.radToDeg( _spherical.theta );
+		this._lat = 90 - MathUtils.radToDeg(_spherical.phi);
+		this._lon = MathUtils.radToDeg(_spherical.theta);
 
 	}
 
 }
 
-function onPointerDown( event ) {
+function onPointerDown(event) {
 
-	if ( this.domElement !== document ) {
+	if (this.domElement !== document) {
 
 		this.domElement.focus();
 
 	}
 
-	if ( this.activeLook ) {
+	if (this.activeLook) {
 
-		switch ( event.button ) {
+		switch (event.button) {
 
 			case 0: this._moveForward = true; break;
 			case 2: this._moveBackward = true; break;
@@ -247,11 +247,11 @@ function onPointerDown( event ) {
 
 }
 
-function onPointerUp( event ) {
+function onPointerUp(event) {
 
-	if ( this.activeLook ) {
+	if (this.activeLook) {
 
-		switch ( event.button ) {
+		switch (event.button) {
 
 			case 0: this._moveForward = false; break;
 			case 2: this._moveBackward = false; break;
@@ -264,9 +264,9 @@ function onPointerUp( event ) {
 
 }
 
-function onPointerMove( event ) {
+function onPointerMove(event) {
 
-	if ( this.domElement === document ) {
+	if (this.domElement === document) {
 
 		this._pointerX = event.pageX - this._viewHalfX;
 		this._pointerY = event.pageY - this._viewHalfY;
@@ -280,9 +280,9 @@ function onPointerMove( event ) {
 
 }
 
-function onKeyDown( event ) {
+function onKeyDown(event) {
 
-	switch ( event.code ) {
+	switch (event.code) {
 
 		case 'ArrowUp':
 		case 'KeyW': this._moveForward = true; break;
@@ -303,9 +303,9 @@ function onKeyDown( event ) {
 
 }
 
-function onKeyUp( event ) {
+function onKeyUp(event) {
 
-	switch ( event.code ) {
+	switch (event.code) {
 
 		case 'ArrowUp':
 		case 'KeyW': this._moveForward = false; break;
@@ -326,9 +326,9 @@ function onKeyUp( event ) {
 
 }
 
-function onContextMenu( event ) {
+function onContextMenu(event) {
 
-	if ( this.enabled === false ) return;
+	if (this.enabled === false) return;
 
 	event.preventDefault();
 

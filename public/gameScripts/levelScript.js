@@ -3,6 +3,8 @@ import { OrbitControls } from "../OrbitControls.js";
 import { FirstPersonControls } from "../gameScripts/FirstPersonControls.js";
 import { CharacterController } from "./CharacterController.js";
 import { Collider } from "./Colliders.js";
+import { STLLoader } from "./STLLoader.js";
+import { GLTFLoader } from "./GLTFLoader.js";
 
 // const width = 1200;
 // const height = 675;
@@ -26,6 +28,9 @@ let ColArray = [];
 let orbitControl1;
 let orbitControl2;
 let planeCol;
+
+let mixer2;
+let mixer3;
 
 let player2Exist = false;
 let aspect = window.innerWidth / window.innerHeight;
@@ -71,6 +76,36 @@ function Init() {
     // fps.movementSpeed = 150;
     // fps.lookSpeed = 150;
 
+    let robot = new GLTFLoader();
+    let robot_model;
+    let robotObj;
+    robot.load("./recursos/player2.glb", function (model) {
+        console.log(model);
+        robot_model = model;
+        robotObj = model.scene;
+        robotObj.scale.set(300, 300, 300);
+        robotObj.position.set(0, 0, 0);
+        scene.add(robotObj);
+
+
+        mixer2 = new THREE.AnimationMixer(robotObj);
+        const action = mixer2.clipAction(model.animations[0]);
+        action.play();
+    });
+
+    robot.load("./recursos/player2.glb", function (model) {
+        console.log(model);
+        robot_model = model;
+        robotObj = model.scene;
+        robotObj.scale.set(300, 300, 300);
+        robotObj.position.set(0, 0, 15);
+        scene.add(robotObj);
+
+
+        mixer3 = new THREE.AnimationMixer(robotObj);
+        const action = mixer3.clipAction(model.animations[1]);
+        action.play();
+    });
 
     const geometry = new THREE.CapsuleGeometry(6, 7, 3, 10);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -207,6 +242,11 @@ function Update() {
         if (typeof child.update === 'function') child.update(delta);
     })
 
+    if (mixer2 && mixer3) {
+        mixer2.update(0.01);
+        mixer3.update(0.01);
+    }
+
     player.update(delta, 1, ColArray);
     col.update();
     col2.update();
@@ -215,8 +255,6 @@ function Update() {
         player2.update(delta, 1, ColArray);
         player2Col.update();
     }
-
-
 }
 
 function Render() {
