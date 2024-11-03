@@ -39,6 +39,7 @@ let aspect = window.innerWidth / window.innerHeight;
 let aspect2 = window.innerWidth / window.innerHeight * 2;
 let robotObj;
 
+let inclinedPlane;
 
 
 function Init() {
@@ -199,16 +200,13 @@ function Init() {
 
 
     const planegeometry2 = new THREE.BoxGeometry(100, 100);
-    const planematerial2 = new THREE.MeshBasicMaterial({ color: '#5b1c1b' });
-    const plane2 = new THREE.Mesh(planegeometry2, planematerial2);
-    plane2.position.set(130, -20, 0);
-    plane2.rotation.x = (90 * 3.1416 / 180);
-    let planeCol2 = new Collider(plane2);
+    const planematerial2 = new THREE.MeshBasicMaterial({ color: '#20ac5b' });
+    inclinedPlane = new THREE.Mesh(planegeometry2, planematerial2);
+    inclinedPlane.position.set(30, -10, 0);
+    inclinedPlane.rotation.x = (250 * 3.1416 / 180);
+    let planeCol2 = new Collider(inclinedPlane, 2);
     ColArray.push(planeCol2);
-
-    const helper4 = new THREE.Box3Helper(planeCol2.boxBB, 0xffff00);
-    scene.add(helper4);
-    scene.add(plane2);
+    scene.add(inclinedPlane);
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'O' || e.key === 'o') {  // Para detectar tanto "p" minúscula como "P" mayúscula
@@ -266,6 +264,7 @@ function Update() {
     if (mixer3) {
         mixer3.update(0.01);
         player.update(delta, 1, ColArray);
+
     }
 
     if (player2Exist) {

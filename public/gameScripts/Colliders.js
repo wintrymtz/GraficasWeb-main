@@ -5,7 +5,9 @@ export class Collider {
     constructor(object, type, dynamic, width, height, depth) {
 
         if (type == undefined) {
-            type = 1;
+            this.type = 1;
+        } else {
+            this.type = type;
         }
 
         if (dynamic == undefined) {
@@ -13,16 +15,18 @@ export class Collider {
         }
 
         this.isStatic = !dynamic;
-        switch (type) {
-            case 1:
+        switch (this.type) {
+            case 1: //Objeto normal
                 this.object3D = object;
                 this.boxBB = new THREE.Box3();
                 this.boxBB.setFromObject(object, false);
 
                 this.helper = new THREE.Box3Helper(this.boxBB, 0xffff00);
                 break;
+            case 2: //plano como piso
+                this.object3D = object;
+                break;
         }
-
     }
 
     update() {

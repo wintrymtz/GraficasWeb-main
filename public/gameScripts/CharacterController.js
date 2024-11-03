@@ -88,7 +88,7 @@ export class CharacterController {
         //Se añade el movimiento a la posicion actual para calcular la siguiente posicion
         let newPos = currentPosition.clone().add(move);
 
-        //Se crea una copia de la geometría y se crea un box3 pero en la siguiente posicion 
+        //Se crea una copia de la geometría y se crea un box3 pero en la siguiente posicion
         let tentativeObject = this.Object3d.clone();
         tentativeObject.position.copy(newPos);
         let box = new THREE.Box3().setFromObject(tentativeObject);
@@ -138,9 +138,9 @@ export class CharacterController {
                 }
             }
 
-            console.log('Dirección de movimiento:', moveDir);
-            console.log('Normal de colisión:', colisionNormal);
-            console.log('Vector lateral:', lateralVector);
+            // console.log('Dirección de movimiento:', moveDir);
+            // console.log('Normal de colisión:', colisionNormal);
+            // console.log('Vector lateral:', lateralVector);
 
             newPos = currentPosition.clone().add(move);
         }
@@ -199,6 +199,12 @@ export class CharacterController {
 
 
     updateForward(movement) {
+
+        // if (this.isJumping == true && movement.equals(new THREE.Vector3(0, 0, 0))) {
+        //     this.Object3d.lookAt(this.forward);
+        //     return;
+        // }
+
         if (!movement.equals(new THREE.Vector3(0, 0, 0))) {
             let nextPos = new THREE.Vector3();
             nextPos.copy(this.Object3d.position);
@@ -207,17 +213,13 @@ export class CharacterController {
             if (!this.updateForwardY) {
                 nextPos.y = this.Object3d.position.y;
             }
-            // console.log(this.Object3d.rotation.y);
-
             this.Object3d.lookAt(nextPos);
-            // console.log(this.Object3d.rotation.y);
             let newForward = new THREE.Vector3(0, 0, 0);
             newForward.set(
                 nextPos.x - this.Object3d.position.x,
                 nextPos.y - this.Object3d.position.y,
                 nextPos.z - this.Object3d.position.z,
             ).normalize();
-            // console.log(this.forward);
             this.forward.set(newForward.x, newForward.y, newForward.z);
             // socket.emit("updatePlayer", this.Object3d.position, 1);
         }
@@ -232,10 +234,6 @@ export class CharacterController {
         this.camLeft.copy(this.camForward);
         this.camLeft.cross(this.Object3d.up);
         this.camLeft.normalize();
-
-        // console.log(this.camForward);
-        // console.log(this.camLeft);
-
     }
 
     applyGravity(delta) {
@@ -260,20 +258,69 @@ export class CharacterController {
     checkVerticalCollision(box, colBoxes) {
 
         for (let i = 0; i < colBoxes.length; i++) {
-            let colBox = colBoxes[i].boxBB;
-            if (colBox === this.collider.boxBB) {
-                this.isGrounded = false;
-                return 0;//Colisiona con su propia caja
-            }
-            if (box.intersectsBox(colBox)) {
-                // Si la colisión es solo en el eje Y (vertical)
-                if ((Math.abs(box.min.y - colBox.max.y) < 2)) { //tolerancia a la distancia al piso
 
-                    this.isGrounded = true;  // Colisión en el suelo
-                    return colBox.max.y;
-                }
+            let colBoxInst = colBoxes[i];
 
+            switch (colBoxInst.type) {
+                case 1:
+                    let colBox = colBoxInst.boxBB;
+                    if (colBox === this.collider.boxBB) {
+                        this.isGrounded = false;
+                        return 0;//Colisiona con su propia caja
+                    }
+                    if (box.intersectsBox(colBox)) {
+                        // Si la colisión es solo en el eje Y (vertical)
+                        if ((Math.abs(box.min.y - colBox.max.y) < 2)) { //tolerancia a la distancia al piso
+
+                            this.isGrounded = true;  // Colisión en el suelo
+                            return colBox.max.y;
+                        }
+
+                    }
+                    break;
+
+                case 2:
+                    const raycaster = new THREE.Raycaster();
+                    const downDirection = new THREE.Vector3(0, -1, 0); // Dirección hacia abajo
+
+                    // Obtener la posición del personaje y actualizar el raycaster
+                    const characterPosition = this.Object3d.position.clone();
+                    raycaster.set(characterPosition, downDirection);
+
+                    // Verificar intersección con el plano inclinado
+                    const intersects = raycaster.intersectObject(colBoxInst.object3D);
+
+                    if (intersects.length > 0) {
+                        this.isGrounded = true;
+
+                        const intersectionPoint = intersects[0].point;
+                        // Obtener la normal de la superficie en el punto de intersección
+                        let surfaceNormal = intersects[0].face.normal.clone();
+                        surfaceNormal.applyQuaternion(colBoxInst.object3D.quaternion);
+
+                        // Crear el quaternion de alineación con la inclinación del terreno
+                        const alignmentQuaternion = new THREE.Quaternion();
+                        alignmentQuaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), surfaceNormal);
+
+                        // Obtener la rotación actual del personaje
+                        const currentQuaternion = this.Object3d.quaternion.clone();
+
+                        // Combinar la alineación del terreno con la rotación Y actual del personaje
+                        const finalQuaternion = new THREE.Quaternion();
+                        finalQuaternion.multiplyQuaternions(alignmentQuaternion, new THREE.Quaternion(0, Math.sin(this.Object3d.rotation.y / 2), 0, Math.cos(this.Object3d.rotation.y / 2)));
+
+                        // Aplicar el ajuste de rotación suavemente
+                        this.Object3d.quaternion.slerp(finalQuaternion, 0);
+
+                        // Ajustar la posición del personaje en Y para mantenerse sobre el suelo
+                        if (Math.abs(box.min.y - intersectionPoint.y + 1) < 2) { // Tolerancia a la distancia al piso
+                            return intersectionPoint.y + 1; // Ajuste en altura para mantenerse sobre el suelo
+                        }
+                    }
+
+                    break;
             }
+
         }
         this.isGrounded = false;
         return 0;
@@ -281,19 +328,23 @@ export class CharacterController {
 
     checkHorizontalCollisions(box, colBoxes) {
         for (let i = 0; i < colBoxes.length; i++) {
-            let colBox = colBoxes[i].boxBB;
+            let colBoxInst = colBoxes[i];
+            if (colBoxInst.type == 1) {
+                let colBox = colBoxInst.boxBB;
 
-            if (colBox === this.collider.boxBB) {
-                this.canMove = true;
-                return null; //Colisiona con su propia caja, debería poder moverse
-            }
-            if (box.intersectsBox(colBox)) {
-                // Si la colisión es en X o Z
-                if (box.min.y < colBox.max.y - this.floorDistanceTolerance) {
-                    this.canMove = false;
-                    return colBox; //si colisiona
+                if (colBox === this.collider.boxBB) {
+                    this.canMove = true;
+                    return null; //Colisiona con su propia caja, debería poder moverse
+                }
+                if (box.intersectsBox(colBox)) {
+                    // Si la colisión es en X o Z
+                    if (box.min.y < colBox.max.y - this.floorDistanceTolerance) {
+                        this.canMove = false;
+                        return colBox; //si colisiona
+                    }
                 }
             }
+
         }
         this.canMove = true;
         return null;  // No hay colisión en X o Z
