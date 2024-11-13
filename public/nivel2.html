@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nivel 2</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./gameScripts/three.module.js"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from "./gameScripts/three.module.js";
+    import { OrbitControls } from "./gameScripts/OrbitControls.js";
+    import { STLLoader } from "./gameScripts/STLLoader.js";
+    import { GLTFLoader } from "./gameScripts/GLTFLoader.js";
+    import { FBXLoader } from "./libs/FBXLoader.js"; // Cambia la ruta según corresponda
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color("#34495E");
+
+    const camera = new THREE.PerspectiveCamera(
+      60,
+      window.innerWidth / window.innerHeight
+    );
+    camera.position.set(497, 180, 700);
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    const cameraControl = new OrbitControls(camera, renderer.domElement);
+
+    const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+    scene.add(hemisphereLight);
+
+    // Cubo en movimiento
+    const cube2Geometry = new THREE.BoxGeometry(1, 1, 1);
+    const cube2Material = new THREE.MeshPhongMaterial({ color: "coral" });
+    const cube2 = new THREE.Mesh(cube2Geometry, cube2Material);
+    const cube2BB = new THREE.Box3();
+    cube2.position.set(522, 140, 525);
+    cube2.scale.set(10.5, 10.5, 10.5);
+    cube2BB.setFromObject(cube2);
+
+
+
+
+
+    ///MAPA 2
+
+    const fbxLoader = new FBXLoader();
+fbxLoader.load(
+  './recursos/map2/map2.fbx', // Ruta al archivo FBX
+  function (object) {
+    // Aquí puedes ajustar la escala y posición del objeto
+    object.scale.set(10, 10, 10); // Ajusta según sea necesario
+    object.position.set(0, 0, 0); // Ajusta según sea necesario
+
+    // Recorre todos los materiales del objeto
+    object.traverse((child) => {
+      if (child.isMesh) {
+        // Si el material tiene una textura, la aplicamos
+        if (child.material.map) {
+          child.material.map.needsUpdate = true; // Asegúrate de que la textura se actualice
+        }
+      }
+    });
+
+    scene.add(object); // Agrega el objeto a la escena
+  },
+  (xhr) => {
+    console.log((xhr.loaded / xhr.total * 100) + '% cargado');
+  },
+  (error) => {
+    console.error('Error al cargar el modelo:', error);
+  }
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Inputs para moverse
+    scene.add(cube2);
+    document.onkeydown = function (e) {
+      if (e.keyCode == 37) cube2.position.x -= 25;
+      if (e.keyCode == 38) cube2.position.z -= 25;
+      if (e.keyCode == 39) cube2.position.x += 25;
+      if (e.keyCode == 40) cube2.position.z += 25;
+    };
+
+    function animate() {
+      cube2BB.copy(cube2.geometry.boundingBox).applyMatrix4(cube2.matrixWorld);
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+
+</html>
