@@ -22,6 +22,12 @@
     import { GLTFLoader } from "./gameScripts/GLTFLoader.js";
     import { TextureLoader } from "./gameScripts/three.module.js";
 
+    import { CharacterController } from "./gameScripts/CharacterController.js";
+    import { Collider } from "./gameScripts/Colliders.js";
+
+    let ColArray = [];
+
+
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#34495E");
 
@@ -34,15 +40,62 @@
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    const cameraControl = new OrbitControls(camera, renderer.domElement);
+    // const cameraControl = new OrbitControls(camera, renderer.domElement);
 
     const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
     scene.add(hemisphereLight);
 
     let starModel;
+    let player;
+
+    function loadModels() {
+
+    }
 
 
-    ///CUBO EN MOVIMIENTO
+    // INIT
+    let clock = new THREE.Clock(true);
+
+    let robot = new GLTFLoader();
+    let robot_model;
+    let robotObj;
+    let orbitControl1;
+    let player2Exist = false;
+
+    function loadPLayer() {
+      robot.load("./recursos/player5.glb", function (model) {
+        // console.log(model);
+        robot_model = model;
+        robotObj = model.scene;
+        robotObj.scale.set(400, 400, 400);
+        robotObj.position.set(522, 120, 525);
+        robotObj.rotation.y = -1.5708;
+        scene.add(robotObj);
+        // mixer3 = new THREE.AnimationMixer(robotObj);
+        // const action = mixer3.clipAction(model.animations[0]);
+        // action.play();
+
+        let colision = new Collider(robotObj, 1, true);
+        ColArray.push(colision);
+        colision.renderHelper(scene);
+        colision.translate(0, 6, 0);
+        colision.scaleY(15);
+        colision.scaleX(8);
+        colision.scaleZ(4);
+        player = new CharacterController(robotObj, camera, 1, colision);
+
+        orbitControl1 = new OrbitControls(camera, renderer.domElement);
+        orbitControl1.maxDistance = 100;
+        orbitControl1.enablePan = false;
+        // cameraControl.maxPolarAngle
+        orbitControl1.minDistance = 20;
+        orbitControl1.target = player.Object3d.position;
+      });
+    }
+
+
+
+    ///CUBO EN MOVIMIENTO---------------------------------------------------------------------------------
     const cube2Geometry = new THREE.BoxGeometry(1, 1, 1);
     const cube2Material = new THREE.MeshPhongMaterial({ color: "coral" });
     const cube2 = new THREE.Mesh(cube2Geometry, cube2Material);
@@ -77,11 +130,13 @@
           }
         });
 
+        let planeCol2 = new Collider(model, 2);
+        ColArray.push(planeCol2);
         scene.add(model);
+
+        loadPLayer();
       }
     );
-
-
 
     //AGUA
     const river = new THREE.PlaneGeometry(1400, 1400);
@@ -122,6 +177,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -146,6 +205,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -174,6 +237,11 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
+
       }
     );
 
@@ -198,9 +266,12 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
-
 
 
     //CRISTAL   
@@ -214,6 +285,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -228,6 +303,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -241,6 +320,11 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
+
       }
     );
 
@@ -255,6 +339,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -269,6 +357,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -282,6 +374,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -296,6 +392,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -310,6 +410,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -323,6 +427,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -350,6 +458,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -378,6 +490,10 @@
 
         scene.add(model);
         starModel = model;
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -395,6 +511,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -409,6 +529,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -423,6 +547,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -437,6 +565,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -453,6 +585,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -467,6 +603,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -481,6 +621,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -498,6 +642,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -512,6 +660,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -525,6 +677,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -542,6 +698,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -556,6 +716,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -570,6 +734,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -584,6 +752,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -601,6 +773,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -615,6 +791,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -642,6 +822,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -666,6 +850,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -690,6 +878,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -714,6 +906,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -738,6 +934,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -766,6 +966,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -791,6 +995,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -815,6 +1023,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -843,6 +1055,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -870,6 +1086,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -895,6 +1115,10 @@
         });
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -911,6 +1135,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         scene.add(model);
+
+        let colision = new Collider(model);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
       }
     );
 
@@ -938,7 +1166,6 @@
     };
 
 
-
     function animate() {
 
       cube2BB
@@ -959,10 +1186,61 @@
         starModel.rotation.y += 0.03;
       }
 
+      // update();
+
       requestAnimationFrame(animate);
     }
 
-    animate();
+    function Update() {
+      const delta = clock.getDelta();
+      scene.traverse(child => {
+        if (typeof child.update === 'function') child.update(delta);
+      })
+
+      if (player) {
+        // mixer3.update(0.01);
+        player.update(delta, 1, ColArray);
+      }
+
+      // if (player2Exist) {
+      //   player2.update(delta, 1, ColArray);
+      // }
+
+      //Se actualiza en el controlador
+      ColArray.forEach((e) => {
+        if (!e.isStatic) {
+          e.update();
+        }
+      });
+    }
+
+
+    function Render() {
+      if (player2Exist) {
+        // Configuración para la primera cámara
+        renderer.setViewport(0, window.innerHeight / 2, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissor(0, window.innerHeight / 2, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissorTest(true);
+        renderer.render(scene, camera);
+
+        // Configuración para la segunda cámara
+        renderer.setViewport(0, 0, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissor(0, 0, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissorTest(true);
+        renderer.render(scene, camera2);
+
+        // Desactivar scissor al finalizar
+        renderer.setScissorTest(false);
+      } else {
+        renderer.render(scene, camera);
+      }
+    }
+
+    renderer.setAnimationLoop(() => {
+      Render();
+      Update();
+    })
+    // animate();
   </script>
 </body>
 
