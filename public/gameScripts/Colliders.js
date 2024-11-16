@@ -3,7 +3,6 @@ import * as THREE from "../three.module.js";
 export class Collider {
 
     constructor(object, type, dynamic, width, height, depth) {
-
         if (type == undefined) {
             this.type = 1;
         } else {
@@ -15,6 +14,10 @@ export class Collider {
         }
 
         this.isStatic = !dynamic;
+        this.isTrigger = false;
+        this.isVisible = false;
+
+
         switch (this.type) {
             case 1: //Objeto normal
                 this.object3D = object;
@@ -25,6 +28,16 @@ export class Collider {
                 break;
             case 2: //plano como piso
                 this.object3D = object;
+                break;
+            case 3: //trigger
+                this.object3D = object;
+                this.isTrigger = true;
+                this.isTriggered = false;
+
+                this.boxBB = new THREE.Box3();
+                this.boxBB.setFromObject(object, false);
+                this.helper = new THREE.Box3Helper(this.boxBB, "#00e318");
+
                 break;
         }
     }
@@ -44,7 +57,17 @@ export class Collider {
     }
 
     renderHelper(scene) {
-        scene.add(this.helper);
+        if (!this.isVisible) {
+            scene.add(this.helper);
+            this.isVisible = true;
+        }
+    }
+
+    disableHelper(scene) {
+        if (this.isVisible) {
+            scene.remove(this.helper);
+            this.isVisible = false;
+        }
     }
 
     scaleY(y) {
@@ -88,6 +111,10 @@ export class Collider {
             box.translate(translatedOffset);
         }
         return box;
+    }
+
+    triggered(value) {
+        this.isTriggered = value;
     }
 
 }

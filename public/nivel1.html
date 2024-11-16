@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nivel 1</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./css/gameWindow.css" rel="stylesheet">
+  <title>Nivel1</title>
   <style>
     body {
       margin: 0;
@@ -15,6 +15,23 @@
 
 
 <body>
+
+  <div id="pauseMenu">
+    <h2>Menú de Pausa</h2>
+    <button class="menu-button" onclick="resumeGame()">Reanudar</button>
+    <button class="menu-button" onclick="openSettings()">Configuración</button>
+    <button class="menu-button" onclick="openHelp()">Ayuda</button>
+    <button class="menu-button" onclick="exitGame()">Salir</button>
+  </div>
+  <div id="gameUI">
+    <img id="vida" src="./recursos/UI/3.png">
+    <div id="timer">
+      <p>Tiempo: <span id="time">0</span> s</p>
+      <p>Puntaje: <span id="score">0</span></p>
+    </div>
+  </div>
+
+  <script type="module" src="./js/gameWindow.js"></script>
   <script type="module">
     import * as THREE from "./gameScripts/three.module.js";
     import { OrbitControls } from "./gameScripts/OrbitControls.js";
@@ -24,9 +41,10 @@
 
     import { CharacterController } from "./gameScripts/CharacterController.js";
     import { Collider } from "./gameScripts/Colliders.js";
-
-    let ColArray = [];
-
+    import { Enemy } from "./gameScripts/Enemy.js";
+    import { Collectable } from "./gameScripts/Collectable.js";
+    import { GameManager } from "./gameScripts/GameManager.js";
+    import { Animator } from "./gameScripts/Animator.js";
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#34495E");
@@ -45,8 +63,10 @@
     const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
     scene.add(hemisphereLight);
 
+
     let starModel;
     let player;
+    let playerAnimator;
 
     function loadModels() {
 
@@ -54,6 +74,9 @@
 
 
     // INIT
+    let ColArray = [];
+    let collectableArray = [];
+
     let clock = new THREE.Clock(true);
 
     let robot = new GLTFLoader();
@@ -62,7 +85,18 @@
     let orbitControl1;
     let player2Exist = false;
 
+    let gameManager = new GameManager();
+
+    if (gameManager.difficulty === 'hard') {
+      const light = new THREE.AmbientLight("#ff5a5a", 0.5); // soft white light
+      scene.add(light);
+    } else {
+      const light = new THREE.AmbientLight(0x404040); // soft white light
+      scene.add(light);
+    }
+
     function loadPLayer() {
+
       robot.load("./recursos/player5.glb", function (model) {
         // console.log(model);
         robot_model = model;
@@ -71,9 +105,12 @@
         robotObj.position.set(522, 120, 525);
         robotObj.rotation.y = -1.5708;
         scene.add(robotObj);
-        // mixer3 = new THREE.AnimationMixer(robotObj);
-        // const action = mixer3.clipAction(model.animations[0]);
-        // action.play();
+
+        let playerMixer = new THREE.AnimationMixer(robotObj);
+        const action = playerMixer.clipAction(model.animations[0]);
+
+
+
 
         let colision = new Collider(robotObj, 1, true);
         ColArray.push(colision);
@@ -84,12 +121,20 @@
         colision.scaleZ(4);
         player = new CharacterController(robotObj, camera, 1, colision);
 
+        playerAnimator = new Animator(playerMixer, model.animations);
+        player.setAnimator(playerAnimator);
+
         orbitControl1 = new OrbitControls(camera, renderer.domElement);
         orbitControl1.maxDistance = 100;
         orbitControl1.enablePan = false;
-        // cameraControl.maxPolarAngle
         orbitControl1.minDistance = 20;
         orbitControl1.target = player.Object3d.position;
+
+        const sound = new Audio('recursos/sound/game.mp3');
+        sound.volume = gameManager.musicVolume;
+        sound.loop = true;
+        sound.play();
+
       });
     }
 
@@ -104,6 +149,21 @@
     cube2.scale.set(10.5, 10.5, 10.5);
     cube2BB.setFromObject(cube2);
 
+
+    // Moneda
+    const coinG = new THREE.BoxGeometry(1, 1, 1);
+    const coinM = new THREE.MeshPhongMaterial({ color: "#fff300" });
+    const coin = new THREE.Mesh(coinG, coinM);
+    coin.position.set(550, 110, 500);
+    coin.scale.set(10.5, 10.5, 10.5);
+
+    let col = new Collider(coin, 3, true);
+    ColArray.push(col);
+    col.renderHelper(scene);
+
+    let coin_c = new Collectable(0, col);
+    collectableArray.push(coin_c);
+    scene.add(coin);
 
 
     //MAPA NIVEL 1
@@ -152,6 +212,9 @@
     plane.rotation.x = -Math.PI / 2;
     plane.position.set(0, 45, 0);
     scene.add(plane);
+
+    let waterCol = new Collider(plane, 2);
+    ColArray.push(waterCol);
 
 
 
@@ -491,9 +554,14 @@
         scene.add(model);
         starModel = model;
 
-        let colision = new Collider(model);
+
+        let colision = new Collider(model, 3, true);
         colision.renderHelper(scene);
         ColArray.push(colision);
+
+        let star_c = new Collectable(2, colision);
+        collectableArray.push(star_c);
+
       }
     );
 
@@ -1163,7 +1231,20 @@
       if (e.keyCode == 40) {
         cube2.position.z = cube2.position.z + 25;
       }
-    };
+      if (e.key == 'F1') {
+        e.preventDefault();
+        ColArray.forEach(e => {
+          e.disableHelper(scene);
+        });
+      }
+      if (e.key == 'F2') {
+        e.preventDefault();
+        ColArray.forEach(e => {
+          e.renderHelper(scene);
+        })
+      }
+    }
+
 
 
     function animate() {
@@ -1198,7 +1279,7 @@
       })
 
       if (player) {
-        // mixer3.update(0.01);
+        playerAnimator.update();
         player.update(delta, 1, ColArray);
       }
 
@@ -1212,6 +1293,22 @@
           e.update();
         }
       });
+
+      //Se actualizan los objetos a recojer
+      collectableArray.forEach((e) => {
+        e.update(scene);
+      });
+
+      //Animacion agua
+      time += 0.01;
+      waterTexture.offset.y = time * -0.2;
+      waterTexture.offset.x = time * -0.1;
+
+      //Animacion de estrella
+      if (starModel) {
+        starModel.rotation.y += 0.03;
+      }
+
     }
 
 
@@ -1240,6 +1337,7 @@
       Render();
       Update();
     })
+
     // animate();
   </script>
 </body>

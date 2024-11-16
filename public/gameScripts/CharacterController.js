@@ -1,5 +1,6 @@
 import * as THREE from "../three.module.js";
 import { InputController } from "./InputController.js";
+import { Animator } from "./Animator.js";
 // import socket from "./socket-connection.js";
 import { Collider } from "./Colliders.js";
 
@@ -12,12 +13,15 @@ export class CharacterController {
         this.velocity = 60;
         this.currentSpeed = 0;
         this.gravity = true;
-        this.gravitySpeed = 8;
+        this.gravitySpeed = 16;
+        this.animator;
 
         this.forward = new THREE.Vector3(1, 0, 0);
         this.left = new THREE.Vector3(0, 0, 0);
         this.currentYSpeedDown = 0;
         this.currentYSpeedUp = 0;
+
+        this.isMoving = false;
 
         this.camForward = new THREE.Vector3(0, 0, 1);
         if (this.camera) {
@@ -35,10 +39,10 @@ export class CharacterController {
         this.isGrounded = false;
         this.canMove = true;
 
-        this.floorDistanceTolerance = 1;
+        this.floorDistanceTolerance = 2;
         this.canJump = true;
         this.isJumping = false;
-        this.jumpForce = 150;
+        this.jumpForce = 300;
 
 
         //colisionador :)
@@ -59,6 +63,9 @@ export class CharacterController {
         this.col = col;
     }
 
+    setAnimator(animator) {
+        this.animator = animator;
+    }
 
     Move() {
 
@@ -79,6 +86,7 @@ export class CharacterController {
         //Obtenemos la posicion actual y el movimiento generado por el controlador
         let currentPosition = this.Object3d.position.clone();
         let move = this.getMovement(delta);
+
         this.updateForward(move);
 
         let gravity = this.applyGravity(delta);
@@ -106,6 +114,13 @@ export class CharacterController {
         let arrayObjCol = objCol;
         let floorPosition = this.checkVerticalCollision(box, arrayObjCol);
         if (floorPosition !== 0) {
+            if (Math.abs(floorPosition - this.Object3d.position.y) > 0.5) {
+                console.log('posicion del suelo', floorPosition);
+                console.log('posicion del jugador', this.Object3d.position.y);
+                // Ajusta la posición de la cámara según el cambio en la altura del suelo
+                this.camera.position.y += (floorPosition - newPos.y);
+            }
+            // Actualiza la nueva posición del suelo
             newPos.y = floorPosition;
         }
 
@@ -153,7 +168,7 @@ export class CharacterController {
             }
         } else if (!this.canMove && !this.isGrounded) {
             newPos = currentPosition.clone().add(gravity);
-            this.Object3d.position.copy(newPos);
+            this.Object3d.position.add(move);
             if (this.camera) {
                 this.camera.position.add(gravity);
             }
@@ -167,22 +182,30 @@ export class CharacterController {
     getMovement(delta) {
         let keys = this.input.getKeys();
 
-        let movement = new THREE.Vector3();
+        if (this.isMoving) {
+            this.animator.move(1);
+        }
 
+        let movement = new THREE.Vector3();
+        this.isMoving = false;
         if (keys.forward) {
             // console.log('forward');
+            this.isMoving = true;
             movement.add(this.camForward.clone().multiplyScalar(this.velocity * delta));
         }
         if (keys.backward) {
             // console.log('backward');
+            this.isMoving = true;
             movement.add(this.camForward.clone().multiplyScalar(-this.velocity * delta));
         }
         if (keys.right) {
             // console.log('right');
+            this.isMoving = true;
             movement.add(this.camLeft.clone().multiplyScalar(this.velocity * delta));
         }
         if (keys.left) {
             // console.log('left');
+            this.isMoving = true;
             movement.add(this.camLeft.clone().multiplyScalar(-this.velocity * delta));
         }
         if (keys.space) {
@@ -192,6 +215,8 @@ export class CharacterController {
             }
         }
         movement.add(this.UpdateJump(delta));
+
+
 
         return movement;
 
@@ -241,8 +266,9 @@ export class CharacterController {
 
         if (!this.isGrounded && this.currentYSpeedUp <= 0) {
 
-            if (this.currentYSpeedDown < this.gravitySpeed) {
-                this.currentYSpeedDown += 0.2;
+            if (this.currentYSpeedDown < 110) {
+                this.currentYSpeedDown += 5;
+                console.log(this.currentYSpeedDown)
             }
             movement.set(-this.Object3d.up.x, -this.Object3d.up.y, -this.Object3d.up.z);
             movement.add(movement.clone().multiplyScalar(this.currentYSpeedDown * delta));
@@ -272,7 +298,7 @@ export class CharacterController {
                         // Si la colisión es solo en el eje Y (vertical)
                         if ((Math.abs(box.min.y - colBox.max.y) < 2)) { //tolerancia a la distancia al piso
 
-                            this.isGrounded = true;  // Colisión en el suelo
+                            this.isGrounded = true;  // Colisión en el suelo/ parte superior de caja
                             return colBox.max.y;
                         }
 
@@ -284,7 +310,7 @@ export class CharacterController {
                     const downDirection = new THREE.Vector3(0, -1, 0); // Dirección hacia abajo
 
                     // Obtener la posición del personaje y actualizar el raycaster
-                    const characterPosition = this.Object3d.position.clone();
+                    const characterPosition = new THREE.Vector3(this.Object3d.position.x, this.Object3d.position.y + 5, this.Object3d.position.z);
                     raycaster.set(characterPosition, downDirection);
 
                     // Verificar intersección con el plano inclinado
@@ -329,8 +355,9 @@ export class CharacterController {
     checkHorizontalCollisions(box, colBoxes) {
         for (let i = 0; i < colBoxes.length; i++) {
             let colBoxInst = colBoxes[i];
+            let colBox = colBoxInst.boxBB;
+
             if (colBoxInst.type == 1) {
-                let colBox = colBoxInst.boxBB;
 
                 if (colBox === this.collider.boxBB) {
                     this.canMove = true;
@@ -342,6 +369,13 @@ export class CharacterController {
                         this.canMove = false;
                         return colBox; //si colisiona
                     }
+                }
+            } else if (colBoxInst.isTrigger) {
+
+                if (box.intersectsBox(colBox)) {
+                    colBoxInst.triggered(true);
+                } else {
+                    colBoxInst.triggered(false);
                 }
             }
 
@@ -375,6 +409,10 @@ export class CharacterController {
         if (this.canJump) {
             this.isJumping = true;
             this.canJump = false;
+        }
+
+        if (this.animator) {
+            this.animator.jump(0);
         }
     }
 

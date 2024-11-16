@@ -62,6 +62,7 @@ canvas {
     transform: translateX(-50px);
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
+
 /* Animación para los botones */
 #pauseMenu.active .menu-button {
     opacity: 1;
@@ -98,16 +99,32 @@ canvas {
 }
 
 #gameUI {
-    position: fixed;
+    position: absolute;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    z-index: 1000;
+    margin: 20px;
+    top: 0;
+    width: 100%;
+}
+
+#gameUI #timer {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    padding: 10px;
     top: 10px;
     right: 10px;
     color: white;
-    font-family: Arial, sans-serif;
-    font-size: 20px;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 10px;
-    border-radius: 8px;
-    z-index: 1000;
+    width: 150px;
+    right: 0;
+}
+
+
+#gameUI #vida {
+    margin-left: 20px;
+    width: 100px;
+    display: inline;
 }
 
 #gameUI p {

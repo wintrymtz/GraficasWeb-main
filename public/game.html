@@ -14,10 +14,6 @@
 </head>
 
 <body>
-
-    <!-- <canvas id="gameCanvas" width="960" height="540"></canvas> -->
-    <!-- <canvas id="gameCanvas" width="1200" height="675"></canvas> -->
-
     <div id="pauseMenu">
         <h2>Menú de Pausa</h2>
         <button class="menu-button" onclick="resumeGame()">Reanudar</button>
@@ -26,8 +22,11 @@
         <button class="menu-button" onclick="exitGame()">Salir</button>
     </div>
     <div id="gameUI">
-        <p>Tiempo: <span id="time">0</span> s</p>
-        <p>Puntaje: <span id="score">0</span></p>
+        <img id="vida" src="./recursos/UI/3.png">
+        <div id="timer">
+            <p>Tiempo: <span id="time">0</span> s</p>
+            <p>Puntaje: <span id="score">0</span></p>
+        </div>
     </div>
 </body>
 <!-- <script src="/socket.io/socket.io.js"></script> -->
@@ -45,8 +44,8 @@
     </script>
 
 <!-- <script type="module" src="/gameScripts/socket-connection.js"></script> -->
-<script type="module" src="/gameScripts/levelscript.js"></script>
-<script type="module" src="/js/gameWindow.js"></script>
+<script type="module" src="./gameScripts/levelscript.js"></script>
+<script type="module" src="./js/gameWindow.js"></script>
 <!-- <script type="module" src="/gameScripts/multiplayeySetUp.js"></script> -->
 
 

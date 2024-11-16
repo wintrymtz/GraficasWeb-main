@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nivel 2</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./css/gameWindow.css" rel="stylesheet">
+  <title>Nivel2</title>
   <style>
     body {
       margin: 0;
@@ -15,6 +16,21 @@
 
 <body>
 
+  <div id="pauseMenu">
+    <h2>Menú de Pausa</h2>
+    <button class="menu-button" onclick="resumeGame()">Reanudar</button>
+    <button class="menu-button" onclick="openSettings()">Configuración</button>
+    <button class="menu-button" onclick="openHelp()">Ayuda</button>
+    <button class="menu-button" onclick="exitGame()">Salir</button>
+  </div>
+  <div id="gameUI">
+    <img id="vida" src="./recursos/UI/3.png">
+    <div id="timer">
+      <p>Tiempo: <span id="time">0</span> s</p>
+      <p>Puntaje: <span id="score">0</span></p>
+    </div>
+  </div>
+
   <script type="importmap">
     {
       "imports": {
@@ -22,13 +38,20 @@
       }
     }
   </script>
+  <script type="module" src="./js/gameWindow.js"></script>
 
   <script type="module">
     import * as THREE from "./gameScripts/three.module.js";
     import { OrbitControls } from "./gameScripts/OrbitControls.js";
     import { STLLoader } from "./gameScripts/STLLoader.js";
     import { GLTFLoader } from "./gameScripts/GLTFLoader.js";
-    import { FBXLoader } from "./libs/FBXLoader.js"; // Cambia la ruta según corresponda
+    import { FBXLoader } from "./gameScripts/FBXLoader.js"; // Cambia la ruta según corresponda
+
+    import { CharacterController } from "./gameScripts/CharacterController.js";
+    import { Collider } from "./gameScripts/Colliders.js";
+
+    import { Collectable } from "./gameScripts/Collectable.js";
+    import { GameManager } from "./gameScripts/GameManager.js";
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#34495E");
@@ -42,7 +65,7 @@
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    const cameraControl = new OrbitControls(camera, renderer.domElement);
+    // const cameraControl = new OrbitControls(camera, renderer.domElement);
 
     const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
     scene.add(hemisphereLight);
@@ -58,45 +81,158 @@
 
 
 
+    // INIT
+    let ColArray = [];
+    let collectableArray = [];
+
+    let clock = new THREE.Clock(true);
+
+    let robot = new GLTFLoader();
+    let robot_model;
+    let robotObj;
+    let orbitControl1;
+    let player2Exist = false;
+    let starModel;
+
+    let player;
+    let gameManager = new GameManager();
+
+    if (gameManager.difficulty === 'hard') {
+      const light = new THREE.AmbientLight("#ff5a5a", 0.5); // soft white light
+      scene.add(light);
+    } else {
+      const light = new THREE.AmbientLight(0x404040); // soft white light
+      scene.add(light);
+    }
+
+
+    function loadPLayer() {
+
+      robot.load("./recursos/player5.glb", function (model) {
+        // console.log(model);
+        robot_model = model;
+        robotObj = model.scene;
+        robotObj.scale.set(400, 400, 400);
+        robotObj.position.set(522, 120, 525);
+        robotObj.rotation.y = -1.5708;
+        scene.add(robotObj);
+        // mixer3 = new THREE.AnimationMixer(robotObj);
+        // const action = mixer3.clipAction(model.animations[0]);
+        // action.play();
+
+        let colision = new Collider(robotObj, 1, true);
+        ColArray.push(colision);
+        colision.renderHelper(scene);
+        colision.translate(0, 6, 0);
+        colision.scaleY(15);
+        colision.scaleX(8);
+        colision.scaleZ(4);
+        player = new CharacterController(robotObj, camera, 1, colision);
+
+        orbitControl1 = new OrbitControls(camera, renderer.domElement);
+        orbitControl1.maxDistance = 100;
+        orbitControl1.enablePan = false;
+        // cameraControl.maxPolarAngle
+        orbitControl1.minDistance = 20;
+        orbitControl1.target = player.Object3d.position;
+
+        orbitControl1.target = player.Object3d.position;
+
+        const sound = new Audio('recursos/sound/game.mp3');
+        sound.volume = gameManager.musicVolume;
+        sound.loop = true;
+        sound.play();
+      });
+    }
 
 
     ///MAPA 2
 
     const fbxLoader = new FBXLoader();
-fbxLoader.load(
-  './recursos/map2/map2.fbx', // Ruta al archivo FBX
-  function (object) {
-    // Aquí puedes ajustar la escala y posición del objeto
-    object.scale.set(10, 10, 10); // Ajusta según sea necesario
-    object.position.set(0, 0, 0); // Ajusta según sea necesario
+    fbxLoader.load(
+      './recursos/map2/map2.fbx', // Ruta al archivo FBX
+      function (object) {
+        // Aquí puedes ajustar la escala y posición del objeto
+        object.scale.set(10, 10, 10); // Ajusta según sea necesario
+        object.position.set(0, 0, 0); // Ajusta según sea necesario
 
-    // Recorre todos los materiales del objeto
-    object.traverse((child) => {
-      if (child.isMesh) {
-        // Si el material tiene una textura, la aplicamos
-        if (child.material.map) {
-          child.material.map.needsUpdate = true; // Asegúrate de que la textura se actualice
+        // Recorre todos los materiales del objeto
+        object.traverse((child) => {
+          if (child.isMesh) {
+            // Si el material tiene una textura, la aplicamos
+            if (child.material.map) {
+              // child.material.map.needsUpdate = true; // Asegúrate de que la textura se actualice
+            }
+
+            if (child.name === 'islands') {
+              let colision = new Collider(child, 2);
+              colision.renderHelper(scene);
+              ColArray.push(colision);
+              console.log(child)
+
+            } else {
+              let colision = new Collider(child, 1, true);
+              colision.renderHelper(scene);
+              ColArray.push(colision);
+              console.log(child)
+            }
+
+
+          }
+
+        });
+
+        scene.add(object); // Agrega el objeto a la escena
+      },
+      (xhr) => {
+        console.log((xhr.loaded / xhr.total * 100) + '% cargado');
+
+        if (xhr.loaded / xhr.total >= 1) {
+          loadPLayer();
         }
+      },
+      (error) => {
+        console.error('Error al cargar el modelo:', error);
       }
-    });
-
-    scene.add(object); // Agrega el objeto a la escena
-  },
-  (xhr) => {
-    console.log((xhr.loaded / xhr.total * 100) + '% cargado');
-  },
-  (error) => {
-    console.error('Error al cargar el modelo:', error);
-  }
-);
+    );
 
 
 
 
+    //ESTRELLA   
+    const Estrella = new GLTFLoader();
+    Estrella.load(
+      "./recursos/Mapa 1/Gold_Star/StarGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(47, 160, 120);
+        model.scale.set(50, 50, 50);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Gold_Star/texture_gold.jpg');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+        starModel = model;
 
 
+        let colision = new Collider(model, 3, true);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
 
+        let star_c = new Collectable(2, colision);
+        collectableArray.push(star_c);
 
+      }
+    );
 
 
 
@@ -106,11 +242,33 @@ fbxLoader.load(
     // Inputs para moverse
     scene.add(cube2);
     document.onkeydown = function (e) {
-      if (e.keyCode == 37) cube2.position.x -= 25;
-      if (e.keyCode == 38) cube2.position.z -= 25;
-      if (e.keyCode == 39) cube2.position.x += 25;
-      if (e.keyCode == 40) cube2.position.z += 25;
-    };
+      if (e.keyCode == 37) {
+        cube2.position.x = cube2.position.x - 25;
+      }
+      if (e.keyCode == 38) {
+        cube2.position.z = cube2.position.z - 25;
+      }
+      if (e.keyCode == 39) {
+        cube2.position.x = cube2.position.x + 25;
+      }
+      if (e.keyCode == 40) {
+        cube2.position.z = cube2.position.z + 25;
+      }
+      if (e.key == 'F1') {
+        e.preventDefault();
+        ColArray.forEach(e => {
+          e.disableHelper(scene);
+        });
+      }
+      if (e.key == 'F2') {
+        e.preventDefault();
+        ColArray.forEach(e => {
+          e.renderHelper(scene);
+        })
+      }
+    }
+
+
 
     function animate() {
       cube2BB.copy(cube2.geometry.boundingBox).applyMatrix4(cube2.matrixWorld);
@@ -118,7 +276,71 @@ fbxLoader.load(
       requestAnimationFrame(animate);
     }
 
-    animate();
+    // animate();
+
+    function Update() {
+      const delta = clock.getDelta();
+      scene.traverse(child => {
+        if (typeof child.update === 'function') child.update(delta);
+      })
+
+      if (player) {
+        // mixer3.update(0.01);
+        player.update(delta, 1, ColArray);
+      }
+
+      // if (player2Exist) {
+      //   player2.update(delta, 1, ColArray);
+      // }
+
+
+      //Animacion de estrella
+      if (starModel) {
+        starModel.rotation.y += 0.03;
+      }
+
+      //Se actualiza en el controlador
+      ColArray.forEach((e) => {
+        if (!e.isStatic) {
+          e.update();
+        }
+      });
+
+      //Se actualizan los objetos a recojer
+      collectableArray.forEach((e) => {
+        e.update(scene);
+      });
+
+
+    }
+
+
+    function Render() {
+      if (player2Exist) {
+        // Configuración para la primera cámara
+        renderer.setViewport(0, window.innerHeight / 2, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissor(0, window.innerHeight / 2, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissorTest(true);
+        renderer.render(scene, camera);
+
+        // Configuración para la segunda cámara
+        renderer.setViewport(0, 0, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissor(0, 0, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissorTest(true);
+        renderer.render(scene, camera2);
+
+        // Desactivar scissor al finalizar
+        renderer.setScissorTest(false);
+      } else {
+        renderer.render(scene, camera);
+      }
+    }
+
+
+    renderer.setAnimationLoop(() => {
+      Render();
+      Update();
+    })
   </script>
 </body>
 

@@ -23,7 +23,7 @@ function changeMode(direction) {
 
     modoActual = (modoActual + direction + 3) % 3;
 
-    switch (modoActual){
+    switch (modoActual) {
 
         case 0:
             modo.textContent = "Modo Historia";
@@ -32,8 +32,8 @@ function changeMode(direction) {
             modo.textContent = "Modo Contrarreloj";
             break;
         case 2:
-        modo.textContent = "Modo Multijugador";
-        break;
+            modo.textContent = "Modo Multijugador";
+            break;
     }
 
 }
@@ -64,12 +64,13 @@ function selectLevel(level) {
 jugar.addEventListener("click", () => {
     let game_;
 
-    if (modoActual === 2) {
-        game_ = `game.html`;
-    }
-    else {
-        game_ = `nivel${selectedLevel}.html`;
-    }
+    // if (modoActual === 2) {
+    //     game_ = `game.html`;
+    // }
+    // else {
+    //     game_ = `nivel${selectedLevel}.html`;
+    // }
+    game_ = `nivel${selectedLevel}.html`;
 
 
     //Esto se agregara en un futuro para definir modo de juego y nivel
@@ -83,7 +84,7 @@ jugar.addEventListener("click", () => {
     //     game_ = `nivel${selectedLevel}_multijugador.html`;
     // }
 
-    window.location.href = game_;
+    window.location.href = game_ + "?gameMode=" + modoActual + '&level=' + selectedLevel;
 
 });
 

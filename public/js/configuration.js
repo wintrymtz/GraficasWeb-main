@@ -10,10 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const cancelButton = document.getElementById("cancelButton");
     const commentButton = document.getElementById("commentButton");
     const usernameInput = document.getElementById("username");
-    
+
     const loginModal = new bootstrap.Modal(document.getElementById("loginModal"));
     const commentModal = new bootstrap.Modal(document.getElementById("commentModal"));
-    
+
     const loginModalButton = document.getElementById("loginModalButton");
     const registerModalButton = document.getElementById("registerModalButton");
     const modalUsername = document.getElementById("modalUsername");
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loginModalButton.addEventListener("click", () => {
         const username = modalUsername.value.trim();
         const password = modalPassword.value.trim();
-        
+
         if (username && password) {
             usernameInput.value = username;
             commentButton.disabled = false;
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     registerModalButton.addEventListener("click", () => {
         const username = modalUsername.value.trim();
         const password = modalPassword.value.trim();
-        
+
         if (username && password) {
             usernameInput.value = username;
             commentButton.disabled = false;
@@ -63,10 +63,29 @@ document.addEventListener("DOMContentLoaded", () => {
     // Acción para enviar comentario
     submitCommentButton.addEventListener("click", () => {
         const comment = document.getElementById("commentText").value.trim();
-        
+
         if (comment) {
             alert(`Comentario enviado: ${comment}`);
             commentModal.hide();
         }
     });
 });
+
+// Dificultad
+document.getElementById("difficulty").addEventListener("change", (e) => {
+    console.log(e.target.value);
+    localStorage.setItem("difficulty", e.target.value);
+})
+
+// Volumen de musica
+document.getElementById("music-volume").addEventListener("change", (e) => {
+    console.log(e.target.value);
+    localStorage.setItem("musicVolume", e.target.value);
+    document.getElementById("vMusic-value").textContent = localStorage.getItem("musicVolume") || 50;
+})
+
+//Actualizamos con local storage
+document.getElementById("difficulty").value = localStorage.getItem("difficulty") || 'normal';
+
+document.getElementById("music-volume").value = localStorage.getItem("musicVolume") || 50;
+document.getElementById("vMusic-value").textContent = localStorage.getItem("musicVolume") || 50;

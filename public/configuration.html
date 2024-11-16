@@ -33,9 +33,9 @@
                                 <label class="property">Dificultad</label>
                             </td>
                             <td class="table-option">
-                                <select class="config-select" id="">
-                                    <option>Normal</option>
-                                    <option>Dificil</option>
+                                <select class="config-select" id="difficulty">
+                                    <option id="1" value="normal">Normal</option>
+                                    <option id="2" value="hard">Dificil</option>
                                 </select>
                             </td>
                         </tr>
@@ -129,7 +129,7 @@
                             </td>
                             <td class="table-option">
                                 <label id="vMusic-value" class="property">0</label>
-                                <input type="range">
+                                <input id="music-volume" type="range">
                             </td>
                         </tr>
                         <tr>
@@ -171,18 +171,21 @@
                         </tr>
                     </table>
                 </div>
-                
+
                 <!-- Usuario que ingresa -->
-                <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+                <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel"
+                    aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="loginModalLabel">Acceder o Registrar</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <input type="text" id="modalUsername" class="form-control" placeholder="Usuario">
-                                <input type="password" id="modalPassword" class="form-control mt-2" placeholder="Contraseña">
+                                <input type="password" id="modalPassword" class="form-control mt-2"
+                                    placeholder="Contraseña">
                                 <div class="mt-3 text-center">
                                     <button id="loginModalButton" class="btn btn-primary">Ingresar</button>
                                     <button id="registerModalButton" class="btn btn-secondary">Registrar</button>
@@ -191,17 +194,20 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Comentar en Facebook -->
-                <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+                <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel"
+                    aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="commentModalLabel">Tu opinion nos importa</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <textarea id="commentText" class="form-control" rows="5" placeholder="Escribe aquí tu comentario..."></textarea>
+                                <textarea id="commentText" class="form-control" rows="5"
+                                    placeholder="Escribe aquí tu comentario..."></textarea>
                                 <div class="text-center mt-3">
                                     <button id="submitCommentButton" class="btn btn-primary">Publicar</button>
                                 </div>
@@ -209,7 +215,7 @@
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </div>

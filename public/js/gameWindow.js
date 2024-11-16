@@ -9,6 +9,9 @@ const canvas = document.getElementById("gameCanvas");
 //    gl.clearColor(0.0, 0.0, 0.0, 1.0); // Negro
 //    gl.clear(gl.COLOR_BUFFER_BIT);
 //  }
+const url = new URL(window.location.href);
+const params = new URLSearchParams(url.search);
+let gameMode = params.get('gameMode') || 'Fail';
 
 
 let score = 0;
@@ -16,13 +19,19 @@ let time = 0;
 let isPaused = false;
 let gameInterval;
 
+let suma = 1;
+if (gameMode == 1) {
+    suma = -1;
+    time = 100;
+}
+
 
 function updateUI() {
     if (!isPaused) {
-        time++;
+        time += suma;
         //score += 10; // Incrementar puntaje
         document.getElementById('time').textContent = time;
-        document.getElementById('score').textContent = score;
+        // document.getElementById('score').textContent = score;
     }
 }
 
