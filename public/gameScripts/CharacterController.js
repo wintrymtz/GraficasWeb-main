@@ -39,7 +39,7 @@ export class CharacterController {
         this.isGrounded = false;
         this.canMove = true;
 
-        this.floorDistanceTolerance = 2;
+        this.floorDistanceTolerance = 4;
         this.canJump = true;
         this.isJumping = false;
         this.jumpForce = 300;
@@ -296,7 +296,7 @@ export class CharacterController {
                     }
                     if (box.intersectsBox(colBox)) {
                         // Si la colisión es solo en el eje Y (vertical)
-                        if ((Math.abs(box.min.y - colBox.max.y) < 2)) { //tolerancia a la distancia al piso
+                        if ((Math.abs(box.min.y - colBox.max.y) < this.floorDistanceTolerance)) { //tolerancia a la distancia al piso
 
                             this.isGrounded = true;  // Colisión en el suelo/ parte superior de caja
                             return colBox.max.y;

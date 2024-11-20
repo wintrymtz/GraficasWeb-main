@@ -54,6 +54,7 @@
 
     import { Collectable } from "./gameScripts/Collectable.js";
     import { GameManager } from "./gameScripts/GameManager.js";
+    import { Animator } from "./gameScripts/Animator.js";
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#34495E");
@@ -97,6 +98,7 @@
     let modelObj;
     let player;
     let starModel;
+    let playerAnimator;
 
     let gameManager = new GameManager();
 
@@ -120,7 +122,7 @@
         robotObj.position.set(0, 620, 450);
         robotObj.rotation.y = -1.5708;
         scene.add(robotObj);
-        // mixer3 = new THREE.AnimationMixer(robotObj);
+        let playerMixer = new THREE.AnimationMixer(robotObj);
         // const action = mixer3.clipAction(model.animations[0]);
         // action.play();
 
@@ -132,6 +134,10 @@
         colision.scaleX(8);
         colision.scaleZ(4);
         player = new CharacterController(robotObj, camera, 1, colision);
+
+
+        playerAnimator = new Animator(playerMixer, model.animations);
+        player.setAnimator(playerAnimator);
 
         orbitControl1 = new OrbitControls(camera, renderer.domElement);
         orbitControl1.maxDistance = 100;
@@ -378,6 +384,7 @@
 
       if (player) {
         // mixer3.update(0.01);
+        playerAnimator.update();
         player.update(delta, 1, ColArray);
       }
 
