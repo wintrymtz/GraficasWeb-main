@@ -23,7 +23,7 @@ TableButton.addEventListener('click', () => {
 
 
 class StoryMode {
-    constructor(Posicion, Jugador, Puntuaciom) {
+    constructor(Posicion, Jugador, Puntuacion) {
       this.Posicion = Posicion;
       this.Jugador = Jugador;
       this.Puntuacion = Puntuacion;
@@ -42,25 +42,40 @@ class StoryMode {
     }
 }
   
-  let tableBody = document.getElementById("tableHistory");
+  let tableBody = document.getElementById("player-points");
   let playerdataSM = [];
   
-//   formProducto.addEventListener("submit", (event) => {
-//     event.preventDefault();
-//     let inputPosition = document.getElementById("Posicion").value;
-//     let inputPlayer = document.getElementById("Jugador").value;
-//     let inputPoints = document.getElementById("Puntuacion").value;
-  
-//     let newPlayerData = new PlayerData(inputPosition, inputPlayer, inputPoints);
-//     playerdataSM.push(newPlayerData);
-  
-//     SavePlayerData(newPlayerData);
-//   //  formProducto.reset();
-//     listarJugadores();
-  
-//     //console.table(productos);
-//   });
-  
+  class TimeTrial {
+    constructor(Posicion, Jugador, Tiempo) {
+        this.Posicion = Posicion;
+        this.Jugador = Jugador;
+        this.Tiempo = Tiempo;
+    }
+
+    get descripcion() {
+        let row = document.createElement("tr");
+        row.innerHTML = `    
+            <tr>
+                <td>${this.Posicion}</td>
+                <td>${this.Jugador}</td>
+                <td>${this.Tiempo}</td>
+            </tr>   
+        `;
+        return row;
+    }
+}
+
+let tableBodyTT = document.getElementById("time-trial-points"); // Cuerpo de la tabla para contrarreloj
+let playerdataTT = []; // Datos del modo contrarreloj
+
+function listarJugadoresTT() {
+    tableBodyTT.innerHTML = "";
+    playerdataTT.forEach((playerdata) => {
+        tableBodyTT.appendChild(playerdata.descripcion);
+    });
+}
+
+
   function listarJugadores() {
     tableBody.innerHTML = "";
     playerdataSM.forEach((playerdata) => {
@@ -68,20 +83,39 @@ class StoryMode {
     });
   }
     
-  async function obtenerProductosDB() {
-    let response = await fetch(
-      "http://localhost/gcw/conection.php"
-    );
-    // let responseText = await response.text();
-    let responseJSON = await response.json();
-    responseJSON.forEach((p) => {
-      let newPlayerData = new Producto(p.Posicion, p.Jugador, p.Puntuaciom);
-      playerdataSM.push(newPlayerData);
-    });
-    listarJugadores();
-  }
-  
+  async function obtenerDB() {
+    try {
+        let response = await fetch("http://localhost/gcw/conection.php");
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        let responseJSON = await response.json();
+
+        // Procesar datos del modo historia
+        if (responseJSON.storyMode && Array.isArray(responseJSON.storyMode)) {
+            responseJSON.storyMode.forEach((p) => {
+                let newPlayerData = new StoryMode(p.Posicion, p.Jugador, p.Puntuacion);
+                playerdataSM.push(newPlayerData);
+            });
+            listarJugadores(); // Listar jugadores en la tabla de historia
+        }
+
+        // Procesar datos del modo contrarreloj
+        if (responseJSON.timeTrial && Array.isArray(responseJSON.timeTrial)) {
+            responseJSON.timeTrial.forEach((p) => {
+                let newPlayerData = new TimeTrial(p.Posicion, p.Jugador, p.Tiempo);
+                playerdataTT.push(newPlayerData);
+            });
+            listarJugadoresTT(); // Listar jugadores en la tabla de contrarreloj
+        }
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+    }
+}
+
+
  
   
-  obtenerProductosDB();
+  obtenerDB();
   
