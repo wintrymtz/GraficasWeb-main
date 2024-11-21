@@ -167,8 +167,10 @@ export class CharacterController {
                 this.camera.position.add(move);
             }
         } else if (!this.canMove && !this.isGrounded) {
+            console.log('aire colision')
             newPos = currentPosition.clone().add(gravity);
-            this.Object3d.position.add(move);
+            // this.Object3d.position.add(move);
+            this.Object3d.position.copy(newPos)
             if (this.camera) {
                 this.camera.position.add(gravity);
             }
@@ -283,6 +285,8 @@ export class CharacterController {
 
     checkVerticalCollision(box, colBoxes) {
 
+        // let floor1 = false;
+
         for (let i = 0; i < colBoxes.length; i++) {
 
             let colBoxInst = colBoxes[i];
@@ -317,6 +321,8 @@ export class CharacterController {
                     const intersects = raycaster.intersectObject(colBoxInst.object3D);
 
                     if (intersects.length > 0) {
+                        // floor1 = true;
+
                         this.isGrounded = true;
 
                         const intersectionPoint = intersects[0].point;
@@ -329,7 +335,7 @@ export class CharacterController {
                         alignmentQuaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), surfaceNormal);
 
                         // Obtener la rotación actual del personaje
-                        const currentQuaternion = this.Object3d.quaternion.clone();
+                        // const currentQuaternion = this.Object3d.quaternion.clone();
 
                         // Combinar la alineación del terreno con la rotación Y actual del personaje
                         const finalQuaternion = new THREE.Quaternion();
@@ -339,7 +345,7 @@ export class CharacterController {
                         this.Object3d.quaternion.slerp(finalQuaternion, 0);
 
                         // Ajustar la posición del personaje en Y para mantenerse sobre el suelo
-                        if (Math.abs(box.min.y - intersectionPoint.y + 1) < 2) { // Tolerancia a la distancia al piso
+                        if (Math.abs(box.min.y - intersectionPoint.y + 1) < 3) { // Tolerancia a la distancia al piso
                             return intersectionPoint.y + 1; // Ajuste en altura para mantenerse sobre el suelo
                         }
                     }
@@ -377,12 +383,28 @@ export class CharacterController {
                 } else {
                     colBoxInst.triggered(false);
                 }
+            } else if (colBoxInst.type == 2) {
+                const raycaster = new THREE.Raycaster();
+                raycaster.near = 1;
+                raycaster.far = 5;
+                const frontDirection = this.forward; // Dirección hacia frente
+
+                // Obtener la posición del personaje y actualizar el raycaster
+                const characterPosition = new THREE.Vector3(this.Object3d.position.x, this.Object3d.position.y + 10, this.Object3d.position.z);
+                raycaster.set(characterPosition, frontDirection);
+
+                // Verificar intersección con el plano inclinado
+                const intersects = raycaster.intersectObject(colBoxInst.object3D);
+                if (intersects.length > 0) {
+                    console.log('colision con suelo')
+                }
             }
 
         }
         this.canMove = true;
         return null;  // No hay colisión en X o Z
     }
+
 
 
     UpdateJump(delta) {
