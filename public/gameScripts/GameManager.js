@@ -52,7 +52,7 @@ export class GameManager {
                 break;
             case 2: // STAR
                 console.log('Ganaste');
-                this.finishGame
+                this.finishGame();
                 break;
         }
     }
