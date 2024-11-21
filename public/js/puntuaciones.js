@@ -24,28 +24,28 @@ TableButton.addEventListener('click', () => {
 
 class StoryMode {
     constructor(Posicion, Jugador, Puntuacion) {
-      this.Posicion = Posicion;
-      this.Jugador = Jugador;
-      this.Puntuacion = Puntuacion;
+        this.Posicion = Posicion;
+        this.Jugador = Jugador;
+        this.Puntuacion = Puntuacion;
     }
-  
+
     get descripcion() {
-      let row = document.createElement("tr");
-      row.innerHTML = `    
+        let row = document.createElement("tr");
+        row.innerHTML = `    
           <tr>
               <td>${this.Posicion}</td>
               <td>${this.Jugador}</td>
               <td>${this.Puntuacion}</td>
           </tr>   
       `;
-      return row;
+        return row;
     }
 }
-  
-  let tableBody = document.getElementById("player-points");
-  let playerdataSM = [];
-  
-  class TimeTrial {
+
+let tableBody = document.getElementById("player-points");
+let playerdataSM = [];
+
+class TimeTrial {
     constructor(Posicion, Jugador, Tiempo) {
         this.Posicion = Posicion;
         this.Jugador = Jugador;
@@ -70,27 +70,29 @@ let playerdataTT = []; // Datos del modo contrarreloj
 
 function listarJugadoresTT() {
     tableBodyTT.innerHTML = "";
+    // console.log(playerdataTT);
     playerdataTT.forEach((playerdata) => {
         tableBodyTT.appendChild(playerdata.descripcion);
     });
 }
 
 
-  function listarJugadores() {
+function listarJugadores() {
     tableBody.innerHTML = "";
     playerdataSM.forEach((playerdata) => {
-      tableBody.appendChild(playerdata.descripcion);
+        tableBody.appendChild(playerdata.descripcion);
     });
-  }
-    
-  async function obtenerDB() {
+}
+
+async function obtenerDB() {
     try {
         let response = await fetch("http://localhost/gcw/conection.php");
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        // if (!response.ok) {
+        //     throw new Error(`HTTP error! Status: ${response.status}`);
+        // }
 
         let responseJSON = await response.json();
+        console.log(responseJSON)
 
         // Procesar datos del modo historia
         if (responseJSON.storyMode && Array.isArray(responseJSON.storyMode)) {
@@ -115,7 +117,7 @@ function listarJugadoresTT() {
 }
 
 
- 
-  
-  obtenerDB();
-  
+
+
+obtenerDB();
+
