@@ -101,6 +101,7 @@
     let playerAnimator;
 
     let gameManager = new GameManager();
+    let spawnPoint = new THREE.Vector3(0, 520, 450);
 
     if (gameManager.difficulty === 'hard') {
       const light = new THREE.AmbientLight("#ff5a5a", 0.5); // soft white light
@@ -119,7 +120,7 @@
         robot_model = model;
         robotObj = model.scene;
         robotObj.scale.set(400, 400, 400);
-        robotObj.position.set(0, 620, 450);
+        robotObj.position.copy(spawnPoint);
         robotObj.rotation.y = -1.5708;
         scene.add(robotObj);
         let playerMixer = new THREE.AnimationMixer(robotObj);
@@ -364,6 +365,14 @@
           e.renderHelper(scene);
         })
       }
+      if (e.key == 'v') {
+        e.preventDefault();
+        gameManager.damage(1);
+      }
+      if (e.key == 'b') {
+        e.preventDefault();
+        gameManager.darVida(1);
+      }
     }
 
 
@@ -386,6 +395,16 @@
         // mixer3.update(0.01);
         playerAnimator.update();
         player.update(delta, 1, ColArray);
+
+
+        if (player.Object3d.position.y <= -320) {
+          console.log('damage');
+          gameManager.damage(1);
+          player.Object3d.position.copy(spawnPoint);
+          orbitControl1.update();
+          camera.position.y = player.Object3d.position.y + 5;
+          camera.lookAt(player.Object3d.position)
+        }
       }
 
       // if (player2Exist) {

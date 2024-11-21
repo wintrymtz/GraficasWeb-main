@@ -68,6 +68,8 @@
     let player;
     let playerAnimator;
 
+    let spawnPoint = new THREE.Vector3(522, 130, 525);
+
     function loadModels() {
 
     }
@@ -102,7 +104,7 @@
         robot_model = model;
         robotObj = model.scene;
         robotObj.scale.set(400, 400, 400);
-        robotObj.position.set(522, 120, 525);
+        robotObj.position.copy(spawnPoint);
         robotObj.rotation.y = -1.5708;
         scene.add(robotObj);
 
@@ -1281,6 +1283,16 @@
       if (player) {
         playerAnimator.update();
         player.update(delta, 1, ColArray);
+
+
+
+        if (player.Object3d.position.y <= 47) {
+          gameManager.damage(1);
+          player.Object3d.position.copy(spawnPoint);
+          orbitControl1.update();
+          camera.position.y = player.Object3d.position.y + 5;
+          camera.lookAt(player.Object3d.position)
+        }
       }
 
       // if (player2Exist) {

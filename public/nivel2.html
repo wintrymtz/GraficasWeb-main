@@ -76,7 +76,7 @@
     const cube2Material = new THREE.MeshPhongMaterial({ color: "coral" });
     const cube2 = new THREE.Mesh(cube2Geometry, cube2Material);
     const cube2BB = new THREE.Box3();
-    cube2.position.set(522, 140, 525);
+    cube2.position.set(722, 140, 525);
     cube2.scale.set(10.5, 10.5, 10.5);
     cube2BB.setFromObject(cube2);
 
@@ -98,6 +98,7 @@
     let player;
     let playerAnimator;
     let gameManager = new GameManager();
+    let spawnPoint = new THREE.Vector3(280, 150, 425);
 
     if (gameManager.difficulty === 'hard') {
       const light = new THREE.AmbientLight("#ff5a5a", 0.5); // soft white light
@@ -115,7 +116,7 @@
         robot_model = model;
         robotObj = model.scene;
         robotObj.scale.set(400, 400, 400);
-        robotObj.position.set(522, 120, 525);
+        robotObj.position.copy(spawnPoint);
         robotObj.rotation.y = -1.5708;
         scene.add(robotObj);
         let playerMixer = new THREE.AnimationMixer(robotObj);
@@ -275,11 +276,11 @@
 
 
 
-    function animate() {
-      cube2BB.copy(cube2.geometry.boundingBox).applyMatrix4(cube2.matrixWorld);
-      renderer.render(scene, camera);
-      requestAnimationFrame(animate);
-    }
+    // function animate() {
+    //   cube2BB.copy(cube2.geometry.boundingBox).applyMatrix4(cube2.matrixWorld);
+    //   renderer.render(scene, camera);
+    //   requestAnimationFrame(animate);
+    // }
 
     // animate();
 
@@ -293,6 +294,16 @@
         // mixer3.update(0.01);
         playerAnimator.update();
         player.update(delta, 1, ColArray);
+
+
+        if (player.Object3d.position.y <= 93) {
+          console.log('damage');
+          gameManager.damage(1);
+          player.Object3d.position.copy(spawnPoint);
+          orbitControl1.update();
+          camera.position.y = player.Object3d.position.y + 5;
+          camera.lookAt(player.Object3d.position)
+        }
       }
 
       // if (player2Exist) {

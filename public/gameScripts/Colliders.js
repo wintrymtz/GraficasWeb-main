@@ -2,7 +2,7 @@ import * as THREE from "../three.module.js";
 
 export class Collider {
 
-    constructor(object, type, dynamic, width, height, depth) {
+    constructor(object, type, dynamic) {
         if (type == undefined) {
             this.type = 1;
         } else {
@@ -16,7 +16,6 @@ export class Collider {
         this.isStatic = !dynamic;
         this.isTrigger = false;
         this.isVisible = false;
-
 
         switch (this.type) {
             case 1: //Objeto normal
@@ -37,7 +36,11 @@ export class Collider {
                 this.boxBB = new THREE.Box3();
                 this.boxBB.setFromObject(object, false);
                 this.helper = new THREE.Box3Helper(this.boxBB, "#00e318");
-
+                break;
+            case 4: //plano como trigger
+                this.object3D = object;
+                this.isTrigger = true;
+                this.isTriggered = false;
                 break;
         }
     }

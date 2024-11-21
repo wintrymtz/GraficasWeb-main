@@ -321,7 +321,6 @@ export class CharacterController {
                     const intersects = raycaster.intersectObject(colBoxInst.object3D);
 
                     if (intersects.length > 0) {
-                        // floor1 = true;
 
                         this.isGrounded = true;
 
@@ -350,6 +349,22 @@ export class CharacterController {
                         }
                     }
 
+                    break;
+
+                case 4:
+                    const raycaster2 = new THREE.Raycaster();
+                    const downDirection2 = new THREE.Vector3(0, -1, 0); // Dirección hacia abajo
+
+                    // Obtener la posición del personaje y actualizar el raycaster
+                    const characterPosition2 = new THREE.Vector3(this.Object3d.position.x, this.Object3d.position.y + 5, this.Object3d.position.z);
+                    raycaster.set(characterPosition, downDirection);
+
+                    // Verificar intersección con el plano inclinado
+                    const intersects2 = raycaster.intersectObject(colBoxInst.object3D);
+
+                    if (intersects.length > 0) {
+                        colBoxInst.triggered(true)
+                    }
                     break;
             }
 

@@ -1,11 +1,12 @@
 import * as THREE from "../three.module.js";
-import { GameManager } from "./gameManager.js";
+import { GameManager } from "./GameManager.js";
 
 export class Collectable {
     //type
     //0 - moneda 
     //1 - item
     //2 - estrella
+    //3 - damage
 
     constructor(type, collision) {
 
