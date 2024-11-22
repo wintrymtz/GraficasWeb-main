@@ -405,13 +405,17 @@
           camera.position.y = player.Object3d.position.y + 5;
           camera.lookAt(player.Object3d.position)
         }
+
+        if (gameManager.gravityItemStatus) {
+          player.gravitySpeed = 8;
+        } else {
+          player.gravitySpeed = 16;
+        }
       }
 
       // if (player2Exist) {
       //   player2.update(delta, 1, ColArray);
       // }
-
-
 
       //Animacion de estrella
       if (starModel) {

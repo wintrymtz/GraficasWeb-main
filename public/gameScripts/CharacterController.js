@@ -71,6 +71,10 @@ export class CharacterController {
 
     }
 
+    setGravitySpeed(value) {
+        this.gravitySpeed = value;
+    }
+
     //no usado
     checkCollisions(arrayCol, box) {
 

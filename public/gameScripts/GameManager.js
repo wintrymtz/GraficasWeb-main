@@ -31,6 +31,10 @@ export class GameManager {
         localStorage.removeItem('level');
         localStorage.removeItem('gameMode');
 
+        this.gravityItemStatus = false;
+
+
+        this.canBeDamaged = true;
 
         this.vida = 3;
         this.updateVida(this.vida);
@@ -77,8 +81,20 @@ export class GameManager {
                 openFacebookPrompt();
                 this.finishGame();
                 break;
-            case 3:
+            case 3: //daño
                 this.damage(1);
+                break;
+
+            case 4:// vida
+                this.darVida(1);
+                break;
+
+            case 5://inmunidad
+                this.canBeDamaged = false;
+                break;
+
+            case 6:// menos gravedad
+                this.gravityItemStatus = true;
                 break;
         }
     }
@@ -95,6 +111,9 @@ export class GameManager {
     }
 
     damage(damage) {
+        if (this.canBeDamaged == false) {
+            return;
+        }
         this.vida -= damage;
         this.updateVida(this.vida);
         if (this.vida <= 0) {
