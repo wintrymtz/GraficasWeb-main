@@ -1,5 +1,5 @@
 CREATE DATABASE gwc;
-USE gwc;
+USE gcw;
 
 CREATE TABLE gamedata (
    ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -34,4 +34,3 @@ DELIMITER ;
 CALL StoryMode;
 CALL TimeTrial;
 
-TRUNCATE TABLE gamedata;

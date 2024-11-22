@@ -69,7 +69,34 @@ document.addEventListener("DOMContentLoaded", () => {
             commentModal.hide();
         }
     });
+    async function handleConection2(action) {
+        const username = modalUsername.value.trim();
+        const password = modalPassword.value.trim();
+
+        if (!username || !password) {
+            alert("Por favor, completa ambos campos.");
+            return;
+        }
+
+        const response = await fetch("http://localhost/gcw/conection2.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action, username, password }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert(result.success);
+            loginModal.hide();
+        } else {
+            alert(result.error);
+        }
+    }
+
+    loginModalButton.addEventListener("click", () => handleConection2("login"));
+    registerModalButton.addEventListener("click", () => handleConection2("register"));
 });
+
 
 // Dificultad
 document.getElementById("difficulty").addEventListener("change", (e) => {
@@ -89,3 +116,4 @@ document.getElementById("difficulty").value = localStorage.getItem("difficulty")
 
 document.getElementById("music-volume").value = localStorage.getItem("musicVolume") || 50;
 document.getElementById("vMusic-value").textContent = localStorage.getItem("musicVolume") || 50;
+
