@@ -1,6 +1,13 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-header('Content-type: application/json');
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Content-Type: application/json; charset=utf-8");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200); // Responde al preflight con éxito
+    exit();
+}
 
 $servername = "localhost";
 $username = "root";
@@ -41,7 +48,7 @@ if ($method === 'POST') {
         if ($checkResult->num_rows > 0) {
             echo json_encode(["error" => "El usuario ya existe."]);
         } else {
-            $query = "INSERT INTO gamedata (Jugador, Contrasena, Puntuacion, Tiempo) VALUES ('$username', '$password', 0, '00:00:00')";
+            $query = "INSERT INTO gamedata (Jugador, Contrasena, Puntuacion, Tiempo) VALUES ('$username', '$password', 0, '59:59:59')";
             if ($conn->query($query) === TRUE) {
                 echo json_encode(["success" => "Registro exitoso.", "user" => $username]);
             } else {
