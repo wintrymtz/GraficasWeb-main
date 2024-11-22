@@ -184,6 +184,10 @@ export class CharacterController {
     getMovement(delta) {
         let keys = this.input.getKeys();
 
+        if (this.isMoving) {
+            this.animator.move(1);
+        }
+
         let movement = new THREE.Vector3();
         this.isMoving = false;
         if (keys.forward) {
@@ -214,11 +218,7 @@ export class CharacterController {
         }
         movement.add(this.UpdateJump(delta));
 
-        if (this.isMoving) {
-            this.animator.setState('move');
-        } else {
-            this.animator.setState('idle');
-        }
+
 
         return movement;
 
@@ -270,7 +270,7 @@ export class CharacterController {
 
             if (this.currentYSpeedDown < 110) {
                 this.currentYSpeedDown += 5;
-                // console.log(this.currentYSpeedDown)
+                console.log(this.currentYSpeedDown)
             }
             movement.set(-this.Object3d.up.x, -this.Object3d.up.y, -this.Object3d.up.z);
             movement.add(movement.clone().multiplyScalar(this.currentYSpeedDown * delta));
@@ -302,8 +302,7 @@ export class CharacterController {
                         // Si la colisión es solo en el eje Y (vertical)
                         if ((Math.abs(box.min.y - colBox.max.y) < this.floorDistanceTolerance)) { //tolerancia a la distancia al piso
 
-                            this.isGrounded = true;
-                            this.isJumping = false;  // Colisión en el suelo/ parte superior de caja
+                            this.isGrounded = true;  // Colisión en el suelo/ parte superior de caja
                             return colBox.max.y;
                         }
 
@@ -424,7 +423,6 @@ export class CharacterController {
 
 
     UpdateJump(delta) {
-
         let movement = new THREE.Vector3(0, 0, 0);
         if (this.isJumping) {
             movement = this.Object3d.up.clone();
@@ -437,8 +435,9 @@ export class CharacterController {
 
             movement.y = this.currentYSpeedUp * delta;
             // console.log(this.currentYSpeedUp);
-        }
 
+            // console.log(movement);
+        }
 
         return movement;
     }
@@ -447,9 +446,10 @@ export class CharacterController {
         if (this.canJump) {
             this.isJumping = true;
             this.canJump = false;
-            if (this.animator) {
-                this.animator.setState('jump');
-            }
+        }
+
+        if (this.animator) {
+            this.animator.jump(0);
         }
     }
 
