@@ -74,6 +74,7 @@ export class GameManager {
                 break;
             case 2: // STAR
                 console.log('Ganaste');
+                openFacebookPrompt();
                 this.finishGame();
                 break;
             case 3:
