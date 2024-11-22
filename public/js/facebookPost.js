@@ -16,7 +16,7 @@ function openFacebookPrompt() {
     return;
   }
 
-  const message = prompt("¡Felicidades por ganar! Ingresa un mensaje para publicar en Facebook:");
+  const message = prompt("¡Felicidades por ganar! Ingresa un mensaje para publicar en nuestra página de Facebook:");
 
   if (message && message.trim() !== "") {
     postToFacebook(message);
@@ -32,7 +32,7 @@ function postToFacebook(message) {
     "POST",
     {
       message: message,
-      access_token: "EAAYtixdsAB0BO8PmSO8koILBOh4tYS43nHZC6AUoJvU51Ugec5VlHK9G5bZASJZB8lV8hp0wV4ZC5sG0CEJ2BG37ZAnjoEwqk1hzlNdckfa5qrpiVBZCZBucRi8HQxsjJYkAH27fAWxbKNUqZAag3xunAWGtF8nkiUK97T6ZAwPJsghEdveIZCV8dO6zgZC7JqgjzjZBJX9Pema0bZAIA83iCDovkCCuT",
+      access_token: "EAAYtixdsAB0BOzQ5pVEZCUN7wMCDBNvgbPpn6ZC8GZBiERbwYJuAv9ATK1387ZAyT7zjX8ETHq8fRZBMKfYZCamXS0uExA5ZBWK8IaOKgsWFDgJtBPjx1hBBdglHWZADss0ZBEPLwx7xTSCZBqh6lFVxa4qQaPq5G9d1bWd8rjNpZAyHO79UxJOnaAWjEQLLPXGLBDt2qUoF8ZA3coZCUqe4UQGs1gneu",
     },
     function (response) {
       if (response && !response.error) {
