@@ -31,7 +31,23 @@
     </div>
   </div>
 
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./gameScripts/three.module.js"
+      }
+    }
+  </script>
   <script type="module" src="./js/gameWindow.js"></script>
+
+  <script
+      async
+      defer
+      crossorigin="anonymous"
+      src="https://connect.facebook.net/en_US/sdk.js"
+    ></script>
+    <script src="./js/facebookPost.js"></script>
+    
   <script type="module">
     import * as THREE from "./gameScripts/three.module.js";
     import { OrbitControls } from "./gameScripts/OrbitControls.js";
@@ -1211,6 +1227,99 @@
         ColArray.push(colision);
       }
     );
+
+
+
+
+
+    //MONEDAS
+
+    // Modelo y texturas
+    const monedaPath = "./recursos/Gold_Coin/GoldCoin.fbx";
+    const textureLoader3 = new THREE.TextureLoader();
+    const coinImg = textureLoader3.load("./recursos/Gold_Coin/MonedaText.png");
+    const monedasArray = [];
+
+    // Función para crear monedas
+    function crearMoneda(x, y, z) {
+      const monedaLoader = new FBXLoader();
+    
+      monedaLoader.load(monedaPath, function (fbx) {
+        fbx.position.set(x, y, z);
+        fbx.scale.set(1.4, 1.4, 1.4);
+      
+        fbx.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = coinImg;
+            child.material.needsUpdate = true;
+          }
+        });
+      
+        //Aplicar colisión
+        let col = new Collider(fbx, 3, true);
+        ColArray.push(col);
+        col.renderHelper(scene);
+      
+        //Aplicar coleccionable
+        let coinCollectable = new Collectable(0, col);
+        collectableArray.push(coinCollectable);
+      
+        
+        scene.add(fbx);
+        monedasArray.push(fbx);
+      });
+    }
+
+    // Animaciomn de monedas
+    function animarMonedas() {
+      monedasArray.forEach(moneda => {
+        moneda.rotation.y += 0.03; 
+      });
+    
+      requestAnimationFrame(animarMonedas);
+    }
+
+    animarMonedas();
+
+    // Crear monedas
+    crearMoneda(550, 120, 425); //Moneda inicial
+
+    crearMoneda(700, 140, 0); //Tubos negros
+    crearMoneda(720, 140, 0);
+    crearMoneda(740, 140, 0);
+
+    crearMoneda(40, 130, -540); //Salto
+    crearMoneda(80, 150, -540);
+    crearMoneda(110, 130, -540);
+        
+    crearMoneda(40, 350, -130); //Torre
+    crearMoneda(40, 350, -150);
+    crearMoneda(40, 350, -170);
+
+    crearMoneda(-150, 300, 180);//Estrella
+    crearMoneda(190, 300, 180);
+
+   
+    if (gameManager.difficulty === 'hard'){
+      crearMoneda(-650, 150, -120); //CAsas
+      crearMoneda(-650, 150, 180);
+      crearMoneda(-600, 150, 400);
+      crearMoneda(-250, 100, 480);
+      crearMoneda(-400, 100, 480);
+      crearMoneda(-400, 100, 510);
+      crearMoneda(-400, 100, 540);
+      crearMoneda(-400, 100, 570);
+
+      crearMoneda(520, 180, -590); //Cristal
+      crearMoneda(-650, 200, -380);
+      crearMoneda(-650, 200, -290);
+      crearMoneda(-170, 350, -180);
+      crearMoneda(210, 350, -170);
+
+      crearMoneda(720, 140, 350); //Barril
+      crearMoneda(720, 140, 320);
+    
+    }
 
 
 
