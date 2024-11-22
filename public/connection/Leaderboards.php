@@ -80,27 +80,4 @@ echo json_encode($data);
 $conn->close();
 
 
-
-// if ($_SERVER['REQUEST_METHOD'] === 'POST'){
-//     $data = file_get_contents("php://input");
-//     $user = json_decode($data, true);
-//     if ($user === null){
-//         echo json_encode(["error"=>"Error al decodificar JSON."]);
-//         exit();
-//     }
-
-//     echo json_encode($user);
-
-//     $Jugador = $user['Jugador'];
-//     $Contrasena = $user['Contrasena'];
-//     $Puntuacion = $user['Puntuacion'];
-//     $Tiempo = $user['Tiempo'];
-
-//     $insertar = "INSERT INTO gamedata VALUES ('$Jugador', '$Contrasena', '$Puntuacion', '$Tiempo')";
-//     $resultado = mysqli_query($conn, $insertar);
-// }
-
-// $conn->close();
-
-
 ?>

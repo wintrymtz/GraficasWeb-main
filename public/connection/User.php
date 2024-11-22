@@ -48,7 +48,7 @@ if ($method === 'POST') {
         if ($checkResult->num_rows > 0) {
             echo json_encode(["error" => "El usuario ya existe."]);
         } else {
-            $query = "INSERT INTO gamedata (Jugador, Contrasena, Puntuacion, Tiempo) VALUES ('$username', '$password', 0, '59:59:59')";
+            $query = "INSERT INTO gamedata (Jugador, Contrasena, Puntuacion, Tiempo) VALUES ('$username', '$password', 0, '215999')";
             if ($conn->query($query) === TRUE) {
                 echo json_encode(["success" => "Registro exitoso.", "user" => $username]);
             } else {

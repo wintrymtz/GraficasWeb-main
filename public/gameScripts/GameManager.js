@@ -27,7 +27,7 @@ export class GameManager {
         console.log(this.musicVolume)
         this.soundVolume = 1;
         this.extraVelocity = 2;
-        localStorage.removeItem('score');
+        //localStorage.removeItem('score');
         localStorage.removeItem('level');
         localStorage.removeItem('gameMode');
 
@@ -77,9 +77,9 @@ export class GameManager {
             case 1: //item
                 break;
             case 2: // STAR
+                this.finishGame();
                 console.log('Ganaste');
                 openFacebookPrompt();
-                this.finishGame();
                 break;
             case 3: //daño
                 this.damage(1);
@@ -99,15 +99,53 @@ export class GameManager {
         }
     }
 
+
+    saveScoreToDatabase(points) {
+        const playerName = localStorage.getItem('playerName'); // Asegúrate de que el jugador haya iniciado sesión correctamente
+
+        if (!playerName) {
+            console.error("Error: No se encontró el nombre del jugador en localStorage.");
+            return;
+        }
+
+        fetch('http://localhost/gcw/SaveScore.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                Jugador: localStorage.getItem('playerName'),
+                Puntuacion: points,
+            }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (data.status === 'error') {
+                    console.error('Error en la respuesta del servidor:', data.message);
+                } else {
+                    console.log('Puntos actualizados exitosamente:', data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error al actualizar los puntos:', error);
+            });
+        
+        
+        
+    }
+
     finishGame() {
-        if (this.alive) { //el jugador ha ganado
+      
             localStorage.setItem('score', this.points);
             localStorage.setItem('level', this.level);
             localStorage.setItem('gameMode', this.gameMode);
-
-        } else { //el jugador ha perdido
-
-        }
+            this.saveScoreToDatabase(this.points);
+      
     }
 
     damage(damage) {

@@ -5,14 +5,14 @@ CREATE TABLE gamedata (
    ID INT PRIMARY KEY AUTO_INCREMENT,
    Jugador VARCHAR(50) UNIQUE,
    Contrasena VARCHAR(20),
-   Puntuacion BIGINT,
-   Tiempo TIME
+   Puntuacion INT,
+   Tiempo INT
 );
 
-INSERT INTO gamedata (Jugador, Contrasena, Puntuacion, Tiempo) VALUES ("Player0", "pass01", 10, '00:01:00');
-INSERT INTO gamedata (Jugador, Contrasena, Puntuacion, Tiempo) VALUES ("Player1", "pass01", 20, '00:02:00');
-INSERT INTO gamedata (Jugador, Contrasena, Puntuacion, Tiempo) VALUES ("Player2", "pass01", 50, '00:01:30');
-
+INSERT INTO gamedata (Jugador, Contrasena, Puntuacion, Tiempo) VALUES ("Player0", "pass01", 10, '60');
+INSERT INTO gamedata (Jugador, Contrasena, Puntuacion, Tiempo) VALUES ("Player1", "pass01", 20, '120');
+INSERT INTO gamedata (Jugador, Contrasena, Puntuacion, Tiempo) VALUES ("Player2", "pass01", 50, '90');
+INSERT INTO gamedata (Jugador, Contrasena, Puntuacion, Tiempo) VALUES ("Player3", "pass01", 2, '215999');
 SELECT * FROM gamedata;
 
 DELIMITER //
@@ -26,7 +26,7 @@ DELIMITER //
 CREATE PROCEDURE TimeTrial()
 BEGIN
 SET @row_number = 0;
-SELECT (@row_number := @row_number + 1) AS Posicion, Jugador, Tiempo FROM gamedata ORDER BY Tiempo ASC;
+SELECT (@row_number := @row_number + 1) AS Posicion, Jugador,  SEC_TO_TIME(Tiempo) AS Tiempo FROM gamedata ORDER BY Tiempo ASC;
 END //
 DELIMITER ;
 
@@ -34,3 +34,4 @@ DELIMITER ;
 CALL StoryMode;
 CALL TimeTrial;
 
+TRUNCATE TABLE gamedata;

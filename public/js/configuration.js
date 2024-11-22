@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const password = modalPassword.value.trim();
 
         if (username && password) {
+            localStorage.setItem("playerName", username);
             usernameInput.value = username;
             commentButton.disabled = false;
             loginModal.hide();
@@ -43,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const password = modalPassword.value.trim();
 
         if (username && password) {
+            localStorage.setItem("playerName", username);
             usernameInput.value = username;
             commentButton.disabled = false;
             loginModal.hide();
@@ -78,14 +80,16 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const response = await fetch("http://localhost/gcw/conection2.php", {
+        const response = await fetch("http://localhost/gcw/User.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action, username, password }),
+            
         });
 
         const result = await response.json();
         if (result.success) {
+            
             alert(result.success);
             loginModal.hide();
         } else {

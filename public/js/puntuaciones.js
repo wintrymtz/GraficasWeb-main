@@ -85,8 +85,8 @@ function listarJugadores() {
 }
 
 async function obtenerDB() {
-    try {
-        let response = await fetch("http://localhost/gcw/conection.php");
+    {
+        let response = await fetch("http://localhost/gcw/Leaderboards.php");
         // if (!response.ok) {
         //     throw new Error(`HTTP error! Status: ${response.status}`);
         // }
@@ -111,9 +111,7 @@ async function obtenerDB() {
             });
             listarJugadoresTT(); // Listar jugadores en la tabla de contrarreloj
         }
-    } catch (error) {
-        console.error("Error al obtener los datos:", error);
-    }
+    } 
 }
 
 
