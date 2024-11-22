@@ -65,7 +65,7 @@ class TimeTrial {
     }
 }
 
-let tableBodyTT = document.getElementById("time-trial-points"); // Cuerpo de la tabla para contrarreloj
+let tableBodyTT = document.getElementById("player-time"); // Cuerpo de la tabla para contrarreloj
 let playerdataTT = []; // Datos del modo contrarreloj
 
 function listarJugadoresTT() {

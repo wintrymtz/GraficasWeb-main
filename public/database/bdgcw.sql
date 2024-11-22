@@ -34,4 +34,3 @@ DELIMITER ;
 CALL StoryMode;
 CALL TimeTrial;
 
-TRUNCATE TABLE gamedata;
