@@ -40,6 +40,14 @@
   </script>
   <script type="module" src="./js/gameWindow.js"></script>
 
+  <script
+      async
+      defer
+      crossorigin="anonymous"
+      src="https://connect.facebook.net/en_US/sdk.js"
+    ></script>
+    <script src="./js/facebookPost.js"></script>
+
   <script type="module">
     import * as THREE from "./gameScripts/three.module.js";
     import { OrbitControls } from "./gameScripts/OrbitControls.js";
@@ -71,15 +79,7 @@
     const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
     scene.add(hemisphereLight);
 
-    // Cubo en movimiento
-    const cube2Geometry = new THREE.BoxGeometry(1, 1, 1);
-    const cube2Material = new THREE.MeshPhongMaterial({ color: "coral" });
-    const cube2 = new THREE.Mesh(cube2Geometry, cube2Material);
-    const cube2BB = new THREE.Box3();
-    cube2.position.set(722, 140, 525);
-    cube2.scale.set(10.5, 10.5, 10.5);
-    cube2BB.setFromObject(cube2);
-
+    
 
 
     // INIT
@@ -243,23 +243,90 @@
 
 
 
+      //MONEDAS
+
+    // Modelo y texturas
+    const monedaPath = "./recursos/Gold_Coin/GoldCoin.fbx";
+    const textureLoader = new THREE.TextureLoader();
+    const coinImg = textureLoader.load("./recursos/Gold_Coin/MonedaText.png");
+    const monedasArray = [];
+
+    // Función para crear monedas
+    function crearMoneda(x, y, z) {
+      const monedaLoader = new FBXLoader();
+    
+      monedaLoader.load(monedaPath, function (fbx) {
+        fbx.position.set(x, y, z);
+        fbx.scale.set(1.4, 1.4, 1.4);
+      
+        fbx.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = coinImg;
+            child.material.needsUpdate = true;
+          }
+        });
+      
+        //Aplicar colisión
+        let col = new Collider(fbx, 3, true);
+        ColArray.push(col);
+        col.renderHelper(scene);
+      
+        //Aplicar coleccionable
+        let coinCollectable = new Collectable(0, col);
+        collectableArray.push(coinCollectable);
+      
+        
+        scene.add(fbx);
+        monedasArray.push(fbx);
+      });
+    }
+
+    // Animaciomn de monedas
+    function animarMonedas() {
+      monedasArray.forEach(moneda => {
+        moneda.rotation.y += 0.03; 
+      });
+    
+      requestAnimationFrame(animarMonedas);
+    }
+
+    animarMonedas();
+
+    // Crear monedas
+    crearMoneda(-290, 140, 210); //Moneda inicial
+    
+    crearMoneda(-280, 210, -220); //Tubo largo
+    crearMoneda(-280, 210, -170); 
+    
+    crearMoneda(280, 160, 320); //Isla
+    crearMoneda(180, 160, 320);
+    
+    crearMoneda(-10, 210, -230); //Puente
+    crearMoneda(20, 190, -230);
+    crearMoneda(-40, 190, -230);
+
+   
+    if (gameManager.difficulty === 'hard'){
+     
+      crearMoneda(-270, 240, -90); //Tubos chiquitos
+
+      crearMoneda(-280, 280, -430); //Tubo negro
+      crearMoneda(-310, 280, -430);
+      crearMoneda(-340, 280, -430);
+
+      crearMoneda(-90, 140, 290); //Llanta
+
+      crearMoneda(200, 230, -150); //Aparato
+    }
+
+    
+
 
 
     // Inputs para moverse
-    scene.add(cube2);
+    
     document.onkeydown = function (e) {
-      if (e.keyCode == 37) {
-        cube2.position.x = cube2.position.x - 25;
-      }
-      if (e.keyCode == 38) {
-        cube2.position.z = cube2.position.z - 25;
-      }
-      if (e.keyCode == 39) {
-        cube2.position.x = cube2.position.x + 25;
-      }
-      if (e.keyCode == 40) {
-        cube2.position.z = cube2.position.z + 25;
-      }
+      
       if (e.key == 'F1') {
         e.preventDefault();
         ColArray.forEach(e => {
@@ -274,13 +341,6 @@
       }
     }
 
-
-
-    // function animate() {
-    //   cube2BB.copy(cube2.geometry.boundingBox).applyMatrix4(cube2.matrixWorld);
-    //   renderer.render(scene, camera);
-    //   requestAnimationFrame(animate);
-    // }
 
     // animate();
 

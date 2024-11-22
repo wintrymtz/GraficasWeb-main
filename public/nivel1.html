@@ -31,12 +31,29 @@
     </div>
   </div>
 
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./gameScripts/three.module.js"
+      }
+    }
+  </script>
   <script type="module" src="./js/gameWindow.js"></script>
+
+  <script
+      async
+      defer
+      crossorigin="anonymous"
+      src="https://connect.facebook.net/en_US/sdk.js"
+    ></script>
+    <script src="./js/facebookPost.js"></script>
+
   <script type="module">
     import * as THREE from "./gameScripts/three.module.js";
     import { OrbitControls } from "./gameScripts/OrbitControls.js";
     import { STLLoader } from "./gameScripts/STLLoader.js";
     import { GLTFLoader } from "./gameScripts/GLTFLoader.js";
+    import { FBXLoader } from "./gameScripts/FBXLoader.js";
     import { TextureLoader } from "./gameScripts/three.module.js";
 
     import { CharacterController } from "./gameScripts/CharacterController.js";
@@ -139,33 +156,6 @@
 
       });
     }
-
-
-
-    ///CUBO EN MOVIMIENTO---------------------------------------------------------------------------------
-    const cube2Geometry = new THREE.BoxGeometry(1, 1, 1);
-    const cube2Material = new THREE.MeshPhongMaterial({ color: "coral" });
-    const cube2 = new THREE.Mesh(cube2Geometry, cube2Material);
-    const cube2BB = new THREE.Box3();
-    cube2.position.set(522, 110, 525);
-    cube2.scale.set(10.5, 10.5, 10.5);
-    cube2BB.setFromObject(cube2);
-
-
-    // Moneda
-    const coinG = new THREE.BoxGeometry(1, 1, 1);
-    const coinM = new THREE.MeshPhongMaterial({ color: "#fff300" });
-    const coin = new THREE.Mesh(coinG, coinM);
-    coin.position.set(550, 110, 500);
-    coin.scale.set(10.5, 10.5, 10.5);
-
-    let col = new Collider(coin, 3, true);
-    ColArray.push(col);
-    col.renderHelper(scene);
-
-    let coin_c = new Collectable(0, col);
-    collectableArray.push(coin_c);
-    scene.add(coin);
 
 
     //MAPA NIVEL 1
@@ -340,41 +330,7 @@
 
 
     //CRISTAL   
-    const Cristal1 = new GLTFLoader();
-    Cristal1.load(
-      "./recursos/Mapa 1/Crystal/scene.gltf",
-      function (gltf) {
-        const model = gltf.scene;
-        model.position.set(722, 110, -100);
-        model.scale.set(15, 15, 15);
-        const textureLoader = new THREE.TextureLoader();
-
-        scene.add(model);
-
-        let colision = new Collider(model);
-        colision.renderHelper(scene);
-        ColArray.push(colision);
-      }
-    );
-
-    const Cristal2 = new GLTFLoader();
-    Cristal2.load(
-      "./recursos/Mapa 1/Crystal/scene.gltf",
-      function (gltf) {
-        const model = gltf.scene;
-        model.position.set(697, 100, -250);
-        model.scale.set(15, 15, 15);
-        model.rotation.y = (Math.PI / 2);
-        const textureLoader = new THREE.TextureLoader();
-
-        scene.add(model);
-
-        let colision = new Collider(model);
-        colision.renderHelper(scene);
-        ColArray.push(colision);
-      }
-    );
-
+   
     const Cristal3 = new GLTFLoader();
     Cristal3.load(
       "./recursos/Mapa 1/Crystal/scene.gltf",
@@ -501,34 +457,34 @@
 
 
 
-    //GLOBO      
-    const Globo = new GLTFLoader();
-    Globo.load(
-      "./recursos/Mapa 1/Globo/GloboGLTF.glb",
-      function (gltf) {
-        const model = gltf.scene;
-        model.position.set(422, 185, 600);
-        model.scale.set(13, 13, 13);
-        const textureLoader = new THREE.TextureLoader();
-        const texture = textureLoader.load('./recursos/Mapa 1/Globo/Image_3.png');
+    // //GLOBO      
+    // const Globo = new GLTFLoader();
+    // Globo.load(
+    //   "./recursos/Mapa 1/Globo/GloboGLTF.glb",
+    //   function (gltf) {
+    //     const model = gltf.scene;
+    //     model.position.set(422, 185, 600);
+    //     model.scale.set(13, 13, 13);
+    //     const textureLoader = new THREE.TextureLoader();
+    //     const texture = textureLoader.load('./recursos/Mapa 1/Globo/Image_3.png');
 
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.y = -1;
+    //     texture.wrapT = THREE.RepeatWrapping;
+    //     texture.repeat.y = -1;
 
-        model.traverse((child) => {
-          if (child.isMesh) {
-            child.material.map = texture;
-            child.material.needsUpdate = true;
-          }
-        });
+    //     model.traverse((child) => {
+    //       if (child.isMesh) {
+    //         child.material.map = texture;
+    //         child.material.needsUpdate = true;
+    //       }
+    //     });
 
-        scene.add(model);
+    //     scene.add(model);
 
-        let colision = new Collider(model);
-        colision.renderHelper(scene);
-        ColArray.push(colision);
-      }
-    );
+    //     let colision = new Collider(model);
+    //     colision.renderHelper(scene);
+    //     ColArray.push(colision);
+    //   }
+    // );
 
 
 
@@ -569,25 +525,7 @@
 
 
 
-    //Casa de Hongo 1     
-    const MushHouse1_1 = new GLTFLoader();
-    MushHouse1_1.load(
-      "./recursos/Mapa 1/Mooshroom_House 1/scene.gltf",
-      function (gltf) {
-        const model = gltf.scene;
-        model.position.set(422, 92, 600);
-        model.scale.set(17, 17, 17);
-        model.rotation.y = (Math.PI / 2) * 1.8;
-        const textureLoader = new THREE.TextureLoader();
-
-        scene.add(model);
-
-        let colision = new Collider(model);
-        colision.renderHelper(scene);
-        ColArray.push(colision);
-      }
-    );
-
+    // //Casa de Hongo 1     
     const MushHouse1_2 = new GLTFLoader();
     MushHouse1_2.load(
       "./recursos/Mapa 1/Mooshroom_House 1/scene.gltf",
@@ -643,25 +581,7 @@
     );
 
 
-    //Casa de Hongo 2     
-    const MushHouse2_1 = new GLTFLoader();
-    MushHouse2_1.load(
-      "./recursos/Mapa 1/Mooshroom_House 2/scene.gltf",
-      function (gltf) {
-        const model = gltf.scene;
-        model.position.set(-353, 260, -25);
-        model.scale.set(60, 60, 60);
-        model.rotation.y = (Math.PI / 2);
-        const textureLoader = new THREE.TextureLoader();
-
-        scene.add(model);
-
-        let colision = new Collider(model);
-        colision.renderHelper(scene);
-        ColArray.push(colision);
-      }
-    );
-
+    // //Casa de Hongo 2    
     const MushHouse2_2 = new GLTFLoader();
     MushHouse2_2.load(
       "./recursos/Mapa 1/Mooshroom_House 2/scene.gltf",
@@ -700,25 +620,7 @@
 
 
 
-    //Casa de Hongo 3     
-    const MushHouse3_1 = new GLTFLoader();
-    MushHouse3_1.load(
-      "./recursos/Mapa 1/Mooshroom_House 3/scene.gltf",
-      function (gltf) {
-        const model = gltf.scene;
-        model.position.set(-303, 90, 600);
-        model.scale.set(30, 30, 30);
-        model.rotation.y = (Math.PI / 2);
-        const textureLoader = new THREE.TextureLoader();
-
-        scene.add(model);
-
-        let colision = new Collider(model);
-        colision.renderHelper(scene);
-        ColArray.push(colision);
-      }
-    );
-
+    // //Casa de Hongo 3     
     const MushHouse3_2 = new GLTFLoader();
     MushHouse3_2.load(
       "./recursos/Mapa 1/Mooshroom_House 3/scene.gltf",
@@ -754,27 +656,7 @@
       }
     );
 
-
-
-    //Casa de Hongo 4     
-    const MushHouse4_1 = new GLTFLoader();
-    MushHouse4_1.load(
-      "./recursos/Mapa 1/Mooshroom_House 4/scene.gltf",
-      function (gltf) {
-        const model = gltf.scene;
-        model.position.set(-650, 180, 100);
-        model.scale.set(105, 105, 105);
-        model.rotation.y = (Math.PI / 2) * -1;
-        const textureLoader = new THREE.TextureLoader();
-
-        scene.add(model);
-
-        let colision = new Collider(model);
-        colision.renderHelper(scene);
-        ColArray.push(colision);
-      }
-    );
-
+    
     const MushHouse4_2 = new GLTFLoader();
     MushHouse4_2.load(
       "./recursos/Mapa 1/Mooshroom_House 4/scene.gltf",
@@ -871,34 +753,6 @@
 
 
     //HONGO
-    const Hongo1 = new GLTFLoader();
-    Hongo1.load(
-      "./recursos/Mapa 1/Mushroom/MushGLTF.glb",
-      function (gltf) {
-        const model = gltf.scene;
-        model.position.set(722, 95, 275);
-        model.scale.set(8, 8, 8);
-        const textureLoader = new THREE.TextureLoader();
-        const texture = textureLoader.load('./recursos/Mapa 1/Mushroom/Image_3.png');
-
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.y = -1;
-
-        model.traverse((child) => {
-          if (child.isMesh) {
-            child.material.map = texture;
-            child.material.needsUpdate = true;
-          }
-        });
-
-        scene.add(model);
-
-        let colision = new Collider(model);
-        colision.renderHelper(scene);
-        ColArray.push(colision);
-      }
-    );
-
     const Hongo2 = new GLTFLoader();
     Hongo2.load(
       "./recursos/Mapa 1/Mushroom/MushGLTF.glb",
@@ -1215,24 +1069,104 @@
 
 
 
+    //MONEDAS
+
+    // Modelo y texturas
+    const monedaPath = "./recursos/Gold_Coin/GoldCoin.fbx";
+    const textureLoader3 = new THREE.TextureLoader();
+    const coinImg = textureLoader3.load("./recursos/Gold_Coin/MonedaText.png");
+    const monedasArray = [];
+
+    // Función para crear monedas
+    function crearMoneda(x, y, z) {
+      const monedaLoader = new FBXLoader();
+    
+      monedaLoader.load(monedaPath, function (fbx) {
+        fbx.position.set(x, y, z);
+        fbx.scale.set(1.4, 1.4, 1.4);
+      
+        fbx.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = coinImg;
+            child.material.needsUpdate = true;
+          }
+        });
+      
+        //Aplicar colisión
+        let col = new Collider(fbx, 3, true);
+        ColArray.push(col);
+        col.renderHelper(scene);
+      
+        //Aplicar coleccionable
+        let coinCollectable = new Collectable(0, col);
+        collectableArray.push(coinCollectable);
+      
+        
+        scene.add(fbx);
+        monedasArray.push(fbx);
+      });
+    }
+
+    // Animaciomn de monedas
+    function animarMonedas() {
+      monedasArray.forEach(moneda => {
+        moneda.rotation.y += 0.03; 
+      });
+    
+      requestAnimationFrame(animarMonedas);
+    }
+
+    animarMonedas();
+
+    // // Crear monedas
+    crearMoneda(550, 120, 425); //Moneda inicial
+
+    crearMoneda(700, 140, 0); //Tubos negros
+    crearMoneda(720, 140, 0);
+    crearMoneda(740, 140, 0);
+
+    crearMoneda(40, 130, -540); //Salto
+    crearMoneda(80, 150, -540);
+    crearMoneda(110, 130, -540);
+        
+    crearMoneda(40, 350, -130); //Torre
+    crearMoneda(40, 350, -150);
+    crearMoneda(40, 350, -170);
+
+    crearMoneda(-150, 300, 180);//Estrella
+    crearMoneda(190, 300, 180);
+
+   
+    if (gameManager.difficulty === 'hard'){
+      crearMoneda(-650, 150, -120); //CAsas
+      crearMoneda(-650, 150, 180);
+      crearMoneda(-600, 150, 400);
+      crearMoneda(-250, 100, 480);
+      crearMoneda(-400, 100, 480);
+      crearMoneda(-400, 100, 510);
+      crearMoneda(-400, 100, 540);
+      crearMoneda(-400, 100, 570);
+
+      crearMoneda(520, 180, -590); //Cristal
+      crearMoneda(-650, 200, -380);
+      crearMoneda(-650, 200, -290);
+      crearMoneda(-170, 350, -180);
+      crearMoneda(210, 350, -170);
+
+      crearMoneda(720, 140, 350); //Barril
+      crearMoneda(720, 140, 320);
+    
+    }
+
+
+
 
     ///INPUTS PARA MOVERSE
-    scene.add(cube2);
+    
     let time = 0;
 
     document.onkeydown = function (e) {
-      if (e.keyCode == 37) {
-        cube2.position.x = cube2.position.x - 25;
-      }
-      if (e.keyCode == 38) {
-        cube2.position.z = cube2.position.z - 25;
-      }
-      if (e.keyCode == 39) {
-        cube2.position.x = cube2.position.x + 25;
-      }
-      if (e.keyCode == 40) {
-        cube2.position.z = cube2.position.z + 25;
-      }
+      
       if (e.key == 'F1') {
         e.preventDefault();
         ColArray.forEach(e => {
@@ -1250,14 +1184,6 @@
 
 
     function animate() {
-
-      cube2BB
-        .copy(cube2.geometry.boundingBox)
-        .applyMatrix4(cube2.matrixWorld);
-      renderer.render(scene, camera);
-
-      //Posicion del cubo
-      console.log(`Cubo posición - X: ${cube2.position.x}, Y: ${cube2.position.y}, Z: ${cube2.position.z}`);
 
       //Animacion agua
       time += 0.01;
