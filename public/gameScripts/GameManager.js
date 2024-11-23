@@ -170,6 +170,7 @@ export class GameManager {
 
             } else if (this.gameMode = 1) {  //modo contrarreloj
                 alert('se acabó el contrarreloj');
+                window.location.href = "./MainMenu2.html";
             }
             this.saveScoreToDatabase(this.points);
         } else {

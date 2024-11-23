@@ -508,44 +508,45 @@
     //   }
     // );
 
+    if (gameManager.gameMode == 0) {
+
+      //ESTRELLA   
+      const Estrella = new GLTFLoader();
+      Estrella.load(
+        "./recursos/Mapa 1/Gold_Star/StarGLTF.glb",
+        function (gltf) {
+          const model = gltf.scene;
+          model.position.set(47, 300, 120);
+          model.scale.set(50, 50, 50);
+          const textureLoader = new THREE.TextureLoader();
+          const texture = textureLoader.load('./recursos/Mapa 1/Gold_Star/texture_gold.jpg');
+
+          texture.wrapT = THREE.RepeatWrapping;
+          texture.repeat.y = -1;
+
+          model.traverse((child) => {
+            if (child.isMesh) {
+              child.material.map = texture;
+              child.material.needsUpdate = true;
+            }
+          });
+
+          scene.add(model);
+          starModel = model;
 
 
-    //ESTRELLA   
-    const Estrella = new GLTFLoader();
-    Estrella.load(
-      "./recursos/Mapa 1/Gold_Star/StarGLTF.glb",
-      function (gltf) {
-        const model = gltf.scene;
-        model.position.set(47, 300, 120);
-        model.scale.set(50, 50, 50);
-        const textureLoader = new THREE.TextureLoader();
-        const texture = textureLoader.load('./recursos/Mapa 1/Gold_Star/texture_gold.jpg');
+          let colision = new Collider(model, 3, true);
+          colision.renderHelper(scene);
+          ColArray.push(colision);
 
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.y = -1;
+          let star_c = new Collectable(2, colision);
+          collectableArray.push(star_c);
 
-        model.traverse((child) => {
-          if (child.isMesh) {
-            child.material.map = texture;
-            child.material.needsUpdate = true;
-          }
-        });
-
-        scene.add(model);
-        starModel = model;
+        }
+      );
 
 
-        let colision = new Collider(model, 3, true);
-        colision.renderHelper(scene);
-        ColArray.push(colision);
-
-        let star_c = new Collectable(2, colision);
-        collectableArray.push(star_c);
-
-      }
-    );
-
-
+    }
 
     // //Casa de Hongo 1     
     const MushHouse1_2 = new GLTFLoader();
