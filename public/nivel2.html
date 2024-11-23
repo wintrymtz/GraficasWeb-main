@@ -13,6 +13,33 @@
     }
   </style>
 </head>
+<script>
+
+  function resumeGame() {
+    isPaused = false;
+    document.getElementById('pauseMenu').classList.remove('active');
+    //  document.getElementById('pauseMenu').style.display = 'none';
+    document.getElementById('gameCanvas').style.filter = 'none';
+    gameInterval = setInterval(updateUI, 1000);
+  }
+
+  function openSettings() {
+    alert("Configuración no implementada aún.");
+  }
+
+  function openHelp() {
+    alert("Ayuda no implementada aún.");
+  }
+
+  function exitGame() {
+    const confirmation = confirm("¿Seguro que quieres salir?");
+    if (confirmation) {
+      window.location.href = "./MainMenu2.html";
+      window.close();
+    }
+  }
+
+</script>
 
 <body>
 
