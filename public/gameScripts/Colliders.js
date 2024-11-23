@@ -61,7 +61,7 @@ export class Collider {
 
     renderHelper(scene) {
         if (!this.isVisible) {
-            scene.add(this.helper);
+            // scene.add(this.helper);
             this.isVisible = true;
         }
     }

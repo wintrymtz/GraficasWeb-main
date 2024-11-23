@@ -84,6 +84,10 @@ jugar.addEventListener("click", () => {
     //     game_ = `nivel${selectedLevel}_multijugador.html`;
     // }
 
+    if (modoActual === 2) {
+        game_ = `multiplayer.html`;
+    }
+
     window.location.href = game_ + "?gameMode=" + modoActual + '&level=' + selectedLevel;
 
 });
