@@ -102,16 +102,19 @@
     scene.add(hemisphereLight);
 
 
-    const spotLight = new THREE.SpotLight(0xffffff, 1); 
-    spotLight.position.set(10, 10, 10);  
+    const spotLight = new THREE.SpotLight("#e7ca67", 5005000); 
+    spotLight.position.set(-200, 1000, 10);  
 
     spotLight.angle = Math.PI / 4; 
     spotLight.penumbra = 0.1;
     spotLight.decay = 2; 
 
-    spotLight.distance = 50; 
+    spotLight.distance = 2500; 
 
     scene.add(spotLight);
+
+    //const spotLightHelper = new THREE.SpotLightHelper(spotLight);
+    //scene.add(spotLightHelper);
 
 
     // INIT
@@ -376,6 +379,11 @@
     crearMoneda(-10, 210, -230); //Puente
     crearMoneda(20, 190, -230);
     crearMoneda(-40, 190, -230);
+
+    crearMoneda(600, 210, 230); //Puente
+    crearMoneda(600, 210, 170);
+    crearMoneda(600, 210, 110);
+    crearMoneda(600, 210, 50);
 
 
     if (gameManager.difficulty === 'hard') {

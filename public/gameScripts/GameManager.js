@@ -34,13 +34,29 @@ export class GameManager {
         console.log('nivel: ', this.level)
         switch (this.level) {
             case "1":
-                this.amountCoins = 12;
+
+                if (this.difficulty == "hard"){
+                    this.amountCoins = 27;
+                }
+                else{
+                    this.amountCoins = 12;
+                }
                 break;
             case "2":
-                this.amountCoins = 8;
+                if (this.difficulty == "hard"){
+                    this.amountCoins = 18;
+                }
+                else{
+                    this.amountCoins = 12;
+                }
                 break;
             case "3":
-                this.amountCoins = 16;
+                if (this.difficulty == "hard"){
+                    this.amountCoins = 32;
+                }
+                else{
+                    this.amountCoins = 16;
+                }
                 break;
         }
 
@@ -101,6 +117,7 @@ export class GameManager {
                 this.finishGame();
                 console.log('Ganaste');
                 openFacebookPrompt();
+                window.location.href = './MainMenu2.html'
                 break;
             case 3: //daño
                 this.damage(1);
@@ -168,8 +185,10 @@ export class GameManager {
 
             if (this.gameMode == 0) { //modo hisotira
 
+                this.saveScoreToDatabase(this.points);
+
             } else if (this.gameMode == 1) {  //modo contrarreloj
-                alert('se acabó el contrarreloj');
+                alert('Has GANADOP :D');
                 window.location.href = "./MainMenu2.html";
             }
             this.saveScoreToDatabase(this.points);

@@ -32,7 +32,7 @@ function postToFacebook(message) {
     "POST",
     {
       message: message,
-      access_token: "EAAYtixdsAB0BO8SJS1jCJTTr0ERm5ZBIgcMPSlhl4QdleoBXPZBRMgzUb1ZBAdH01O7fLeBgzOZBuAjzXYTe4Jr380ZBpyXHWZBYaxIdxzOZAYj1UNMXQ1VG7RRJsPQr6GigE2WjeZBCZAlZB3z7NIxd9B1lXY4tltj6X6LTNdwIdOLGLgt8Tdh1axOgK8b8GBUvWBgsFZBGDq24ZAYGNTD0XmIkPEhZC",
+      access_token: "EAAYtixdsAB0BO1vgzHiShbVNrtv4GLQWgm0L8E6XS4frRFlMvnvCtNRJQ10SZBELZCZB3ZC0h65xSH7IKslPKAuHkZBsIhRAMJZCHIL9pGJc6GzZApkZAIKaTGPCLmTGoFY4qsdGZCLK6skGFelf87dDEco6uxXxe7M1JbIIQiHzvBEDM5zE4J5O5GLg9ELrppk0JvhX7yXPSnJcbUWTTDoO7LJZA6",
     },
     function (response) {
       if (response && !response.error) {

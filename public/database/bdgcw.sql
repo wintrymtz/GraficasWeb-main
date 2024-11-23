@@ -1,4 +1,4 @@
-CREATE DATABASE gwc;
+CREATE DATABASE gcw;
 USE gcw;
 
 CREATE TABLE gamedata (
@@ -29,9 +29,3 @@ SET @row_number = 0;
 SELECT (@row_number := @row_number + 1) AS Posicion, Jugador,  SEC_TO_TIME(Tiempo) AS Tiempo FROM gamedata ORDER BY Tiempo ASC;
 END //
 DELIMITER ;
-
-
-CALL StoryMode;
-CALL TimeTrial;
-
-TRUNCATE TABLE gamedata;

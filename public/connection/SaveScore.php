@@ -38,8 +38,8 @@ if (empty($jugador) || !is_numeric($puntuacion)) {
 // Configuración de la base de datos
 $servername = "localhost";
 $username = "root";
-$password = "";
-$dbname = "tu_base_de_datos";
+$password = "Guillermo2004.";
+$dbname = "gcw";
 
 // Crear conexión a la base de datos
 $conn = new mysqli($servername, $username, $password, $dbname);
