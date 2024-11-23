@@ -42,13 +42,8 @@
   </script>
   <script type="module" src="./js/gameWindow.js"></script>
 
-  <script
-      async
-      defer
-      crossorigin="anonymous"
-      src="https://connect.facebook.net/en_US/sdk.js"
-    ></script>
-    <script src="./js/facebookPost.js"></script>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+  <script src="./js/facebookPost.js"></script>
 
   <script type="module">
     import * as THREE from "./gameScripts/three.module.js";
@@ -293,7 +288,6 @@
 
 
 
-
     //ESTRELLA   
     const Estrella = new GLTFLoader();
     Estrella.load(
@@ -331,9 +325,34 @@
 
 
 
-    
+    const powerLoader = new FBXLoader();
+    const textureLoader2 = new THREE.TextureLoader();
+    const powerTexture = textureLoader2.load("./recursos/Crystal/crystal_17_2.png");
 
-    //MONEDAS
+    powerLoader.load("./recursos/Crystal/crystal_17_2.fbx", function (fbx) {
+      fbx.position.set(200, 300, -100);
+      fbx.scale.set(0.5, 0.5, 0.5);
+
+      fbx.traverse((child) => {
+        if (child.isMesh) {
+          child.material.map = powerTexture;
+          child.material.needsUpdate = true;
+        }
+      });
+
+      //Aplicar colisión
+      let col = new Collider(fbx, 3, true);
+      ColArray.push(col);
+      col.renderHelper(scene);
+
+      //Aplicar coleccionable
+      let coinCollectable = new Collectable(6, col);
+      collectableArray.push(coinCollectable);
+
+
+      scene.add(fbx);
+      monedasArray.push(fbx);
+    });
 
     // Modelo y texturas
     const monedaPath = "./recursos/Gold_Coin/GoldCoin.fbx";
@@ -344,28 +363,28 @@
     // Función para crear monedas
     function crearMoneda(x, y, z) {
       const monedaLoader = new FBXLoader();
-    
+
       monedaLoader.load(monedaPath, function (fbx) {
         fbx.position.set(x, y, z);
         fbx.scale.set(1.4, 1.4, 1.4);
-      
+
         fbx.traverse((child) => {
           if (child.isMesh) {
             child.material.map = coinImg;
             child.material.needsUpdate = true;
           }
         });
-      
+
         //Aplicar colisión
         let col = new Collider(fbx, 3, true);
         ColArray.push(col);
         col.renderHelper(scene);
-      
+
         //Aplicar coleccionable
         let coinCollectable = new Collectable(0, col);
         collectableArray.push(coinCollectable);
-      
-        
+
+
         scene.add(fbx);
         monedasArray.push(fbx);
       });
@@ -374,9 +393,9 @@
     // Animaciomn de monedas
     function animarMonedas() {
       monedasArray.forEach(moneda => {
-        moneda.rotation.y += 0.03; 
+        moneda.rotation.y += 0.03;
       });
-    
+
       requestAnimationFrame(animarMonedas);
     }
 
@@ -391,12 +410,12 @@
 
     crearMoneda(-480, 385, -460); //Plataforma oscura
     crearMoneda(-440, 385, -480);
-    
+
     crearMoneda(150, 300, 150); //Plataformas giratorias
     crearMoneda(150, 300, -150);
     crearMoneda(-150, 300, -150);
     crearMoneda(-150, 300, 150);
-    
+
     //Plataformas subiendo 3
     crearMoneda(-300, 280, -50);
     crearMoneda(-300, 340, -50);
@@ -407,9 +426,9 @@
     crearMoneda(0, 340, -180);
     crearMoneda(0, 400, -180);
 
-    
 
-    if (gameManager.difficulty === 'hard'){
+
+    if (gameManager.difficulty === 'hard') {
       crearMoneda(-340, 350, -510); //Tubos negros
       crearMoneda(-290, 350, -500);
       crearMoneda(-480, 330, -350);

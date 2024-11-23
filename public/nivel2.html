@@ -40,13 +40,8 @@
   </script>
   <script type="module" src="./js/gameWindow.js"></script>
 
-  <script
-      async
-      defer
-      crossorigin="anonymous"
-      src="https://connect.facebook.net/en_US/sdk.js"
-    ></script>
-    <script src="./js/facebookPost.js"></script>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+  <script src="./js/facebookPost.js"></script>
 
   <script type="module">
     import * as THREE from "./gameScripts/three.module.js";
@@ -79,7 +74,7 @@
     const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
     scene.add(hemisphereLight);
 
-    
+
 
 
     // INIT
@@ -153,7 +148,6 @@
 
 
     ///MAPA 2
-
     const fbxLoader = new FBXLoader();
     fbxLoader.load(
       './recursos/map2/map2.fbx', // Ruta al archivo FBX
@@ -174,16 +168,27 @@
               let colision = new Collider(child, 2);
               colision.renderHelper(scene);
               ColArray.push(colision);
-              console.log(child)
+              // console.log(child)
 
-            } else {
+            } else if (child.name === 'boat') {
+              let colision = new Collider(child, 1, true);
+              colision.renderHelper(scene);
+              colision.translate(0, -120, 0);
+              ColArray.push(colision);
+
+            } else if (child.name === 'platform') {
+              let colision = new Collider(child, 1, true);
+              colision.renderHelper(scene);
+              colision.disableHelper(scene);
+              colision.translate(0, -150, 0);
+              ColArray.push(colision);
+            }
+            else {
               let colision = new Collider(child, 1, true);
               colision.renderHelper(scene);
               ColArray.push(colision);
-              console.log(child)
+              console.log(child.name)
             }
-
-
           }
 
         });
@@ -205,13 +210,15 @@
 
 
 
+
+
     //ESTRELLA   
     const Estrella = new GLTFLoader();
     Estrella.load(
       "./recursos/Mapa 1/Gold_Star/StarGLTF.glb",
       function (gltf) {
         const model = gltf.scene;
-        model.position.set(47, 160, 120);
+        model.position.set(430, 140, -580);
         model.scale.set(50, 50, 50);
         const textureLoader = new THREE.TextureLoader();
         const texture = textureLoader.load('./recursos/Mapa 1/Gold_Star/texture_gold.jpg');
@@ -240,10 +247,38 @@
       }
     );
 
+    //BAttery Powerup
+    const powerLoader = new FBXLoader();
+    const textureLoader2 = new THREE.TextureLoader();
+    const powerTexture = textureLoader2.load("./recursos/Battery/Battery_Default_Albedo.png");
+
+    powerLoader.load("./recursos/Battery/Battery.fbx", function (fbx) {
+      fbx.position.set(-290, 230, 100);
+      fbx.scale.set(0.8, 0.8, 0.8);
+
+      fbx.traverse((child) => {
+        if (child.isMesh) {
+          child.material.map = powerTexture;
+          child.material.needsUpdate = true;
+        }
+      });
+
+      //Aplicar colisión
+      let col = new Collider(fbx, 3, true);
+      ColArray.push(col);
+      col.renderHelper(scene);
+
+      //Aplicar coleccionable
+      let coinCollectable = new Collectable(5, col);
+      collectableArray.push(coinCollectable);
 
 
+      scene.add(fbx);
+      monedasArray.push(fbx);
+    });
 
-      //MONEDAS
+
+    //MONEDAS
 
     // Modelo y texturas
     const monedaPath = "./recursos/Gold_Coin/GoldCoin.fbx";
@@ -254,28 +289,27 @@
     // Función para crear monedas
     function crearMoneda(x, y, z) {
       const monedaLoader = new FBXLoader();
-    
+
       monedaLoader.load(monedaPath, function (fbx) {
         fbx.position.set(x, y, z);
         fbx.scale.set(1.4, 1.4, 1.4);
-      
+
         fbx.traverse((child) => {
           if (child.isMesh) {
             child.material.map = coinImg;
             child.material.needsUpdate = true;
           }
         });
-      
+
         //Aplicar colisión
         let col = new Collider(fbx, 3, true);
         ColArray.push(col);
         col.renderHelper(scene);
-      
+
         //Aplicar coleccionable
         let coinCollectable = new Collectable(0, col);
         collectableArray.push(coinCollectable);
-      
-        
+
         scene.add(fbx);
         monedasArray.push(fbx);
       });
@@ -284,9 +318,9 @@
     // Animaciomn de monedas
     function animarMonedas() {
       monedasArray.forEach(moneda => {
-        moneda.rotation.y += 0.03; 
+        moneda.rotation.y += 0.03;
       });
-    
+
       requestAnimationFrame(animarMonedas);
     }
 
@@ -294,20 +328,20 @@
 
     // Crear monedas
     crearMoneda(-290, 140, 210); //Moneda inicial
-    
+
     crearMoneda(-280, 210, -220); //Tubo largo
-    crearMoneda(-280, 210, -170); 
-    
+    crearMoneda(-280, 210, -170);
+
     crearMoneda(280, 160, 320); //Isla
     crearMoneda(180, 160, 320);
-    
+
     crearMoneda(-10, 210, -230); //Puente
     crearMoneda(20, 190, -230);
     crearMoneda(-40, 190, -230);
 
-   
-    if (gameManager.difficulty === 'hard'){
-     
+
+    if (gameManager.difficulty === 'hard') {
+
       crearMoneda(-270, 240, -90); //Tubos chiquitos
 
       crearMoneda(-280, 280, -430); //Tubo negro
@@ -319,14 +353,14 @@
       crearMoneda(200, 230, -150); //Aparato
     }
 
-    
+
 
 
 
     // Inputs para moverse
-    
+
     document.onkeydown = function (e) {
-      
+
       if (e.key == 'F1') {
         e.preventDefault();
         ColArray.forEach(e => {
@@ -342,9 +376,11 @@
     }
 
 
+
     // animate();
 
     function Update() {
+
       const delta = clock.getDelta();
       scene.traverse(child => {
         if (typeof child.update === 'function') child.update(delta);
@@ -358,7 +394,10 @@
 
         if (player.Object3d.position.y <= 93) {
           console.log('damage');
-          gameManager.damage(1);
+          let damage = gameManager.damage(1);
+          if (damage == false) {
+            return;
+          }
           player.Object3d.position.copy(spawnPoint);
           orbitControl1.update();
           camera.position.y = player.Object3d.position.y + 5;
@@ -381,6 +420,7 @@
         if (!e.isStatic) {
           e.update();
         }
+        e.disableHelper(scene);
       });
 
       //Se actualizan los objetos a recojer

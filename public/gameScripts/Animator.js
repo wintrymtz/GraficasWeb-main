@@ -44,7 +44,7 @@ export class Animator {
     }
 
     move(animationIndex) {
-        console.log('intenado entrar:', this.currentState);
+        // console.log('intenado entrar:', this.currentState);
         if (this.currentState == 'move' || this.currentState == 'jump') {
             return;
         }
@@ -59,7 +59,7 @@ export class Animator {
 
     setState(state) {
 
-        console.log('estado:', this.currentState);
+        // console.log('estado:', this.currentState);
 
         if (this.isJumping) {
             return;

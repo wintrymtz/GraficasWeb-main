@@ -40,13 +40,8 @@
   </script>
   <script type="module" src="./js/gameWindow.js"></script>
 
-  <script
-      async
-      defer
-      crossorigin="anonymous"
-      src="https://connect.facebook.net/en_US/sdk.js"
-    ></script>
-    <script src="./js/facebookPost.js"></script>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+  <script src="./js/facebookPost.js"></script>
 
   <script type="module">
     import * as THREE from "./gameScripts/three.module.js";
@@ -330,7 +325,7 @@
 
 
     //CRISTAL   
-   
+
     const Cristal3 = new GLTFLoader();
     Cristal3.load(
       "./recursos/Mapa 1/Crystal/scene.gltf",
@@ -656,7 +651,7 @@
       }
     );
 
-    
+
     const MushHouse4_2 = new GLTFLoader();
     MushHouse4_2.load(
       "./recursos/Mapa 1/Mooshroom_House 4/scene.gltf",
@@ -1080,39 +1075,40 @@
     // Función para crear monedas
     function crearMoneda(x, y, z) {
       const monedaLoader = new FBXLoader();
-    
+
       monedaLoader.load(monedaPath, function (fbx) {
         fbx.position.set(x, y, z);
         fbx.scale.set(1.4, 1.4, 1.4);
-      
+
         fbx.traverse((child) => {
           if (child.isMesh) {
             child.material.map = coinImg;
             child.material.needsUpdate = true;
           }
         });
-      
+
         //Aplicar colisión
         let col = new Collider(fbx, 3, true);
         ColArray.push(col);
         col.renderHelper(scene);
-      
+
         //Aplicar coleccionable
         let coinCollectable = new Collectable(0, col);
         collectableArray.push(coinCollectable);
-      
-        
+
+
         scene.add(fbx);
         monedasArray.push(fbx);
       });
+
     }
 
     // Animaciomn de monedas
     function animarMonedas() {
       monedasArray.forEach(moneda => {
-        moneda.rotation.y += 0.03; 
+        moneda.rotation.y += 0.03;
       });
-    
+
       requestAnimationFrame(animarMonedas);
     }
 
@@ -1128,7 +1124,7 @@
     crearMoneda(40, 130, -540); //Salto
     crearMoneda(80, 150, -540);
     crearMoneda(110, 130, -540);
-        
+
     crearMoneda(40, 350, -130); //Torre
     crearMoneda(40, 350, -150);
     crearMoneda(40, 350, -170);
@@ -1136,8 +1132,8 @@
     crearMoneda(-150, 300, 180);//Estrella
     crearMoneda(190, 300, 180);
 
-   
-    if (gameManager.difficulty === 'hard'){
+
+    if (gameManager.difficulty === 'hard') {
       crearMoneda(-650, 150, -120); //CAsas
       crearMoneda(-650, 150, 180);
       crearMoneda(-600, 150, 400);
@@ -1155,18 +1151,44 @@
 
       crearMoneda(720, 140, 350); //Barril
       crearMoneda(720, 140, 320);
-    
+
     }
 
+    //crear vida
+    let vidaItem;
+    const Tuerca = new GLTFLoader();
+    Tuerca.load(
+      "./recursos/nut/scene.gltf",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(0, 200, 550);
+        model.scale.set(35, 35, 35);
+        model.rotation.x += 1.3;
+        const textureLoader = new THREE.TextureLoader();
+
+        scene.add(model);
+
+        //Aplicar colisión
+        let col = new Collider(model, 3, true);
+        ColArray.push(col);
+        col.renderHelper(scene);
+
+        //Aplicar coleccionable
+        let coinCollectable = new Collectable(4, col);
+        collectableArray.push(coinCollectable);
+
+        vidaItem = model;
+      }
+    );
 
 
 
     ///INPUTS PARA MOVERSE
-    
+
     let time = 0;
 
     document.onkeydown = function (e) {
-      
+
       if (e.key == 'F1') {
         e.preventDefault();
         ColArray.forEach(e => {
@@ -1205,6 +1227,10 @@
       scene.traverse(child => {
         if (typeof child.update === 'function') child.update(delta);
       })
+
+      if (vidaItem) {
+        vidaItem.rotation.y += 0.1;
+      }
 
       if (player) {
         playerAnimator.update();

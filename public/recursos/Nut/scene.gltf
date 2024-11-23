@@ -1,0 +1,332 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 1809,
+      "max": [
+        29.19623565673828,
+        25.000003814697266,
+        25.980764389038086
+      ],
+      "min": [
+        -29.19623565673828,
+        -0.2508869171142578,
+        -25.98076820373535
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 21708,
+      "componentType": 5126,
+      "count": 1809,
+      "max": [
+        1.0,
+        0.9907658696174622,
+        1.0
+      ],
+      "min": [
+        -1.0,
+        -0.9999998807907104,
+        -1.0
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 1809,
+      "max": [
+        1.0,
+        0.7283346652984619,
+        0.9999966621398926,
+        1.0
+      ],
+      "min": [
+        -1.0,
+        -0.9303168654441833,
+        -0.9999992847442627,
+        1.0
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 1809,
+      "max": [
+        0.9945939183235168,
+        0.9942854046821594
+      ],
+      "min": [
+        0.00390625,
+        0.014584720134735107
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 14472,
+      "componentType": 5126,
+      "count": 1809,
+      "max": [
+        0.9945939183235168,
+        0.9942854046821594
+      ],
+      "min": [
+        0.00390625,
+        0.014584720134735107
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 28944,
+      "componentType": 5126,
+      "count": 1809,
+      "max": [
+        0.9945939183235168,
+        0.9942854046821594
+      ],
+      "min": [
+        0.00390625,
+        0.014584720134735107
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 43416,
+      "componentType": 5126,
+      "count": 1809,
+      "max": [
+        0.9945939183235168,
+        0.9942854046821594
+      ],
+      "min": [
+        0.00390625,
+        0.014584720134735107
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 57888,
+      "componentType": 5126,
+      "count": 1809,
+      "max": [
+        0.9945939183235168,
+        0.9942854046821594
+      ],
+      "min": [
+        0.00390625,
+        0.014584720134735107
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 6090,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "j-conrad (https://sketchfab.com/j-conrad)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/hex-nut-ad975a4b143246919951f52dddbbd0ae",
+      "title": "Hex Nut"
+    },
+    "generator": "Sketchfab-12.68.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 24360,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 72360,
+      "byteOffset": 24360,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 43416,
+      "byteOffset": 96720,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 28944,
+      "byteOffset": 140136,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 169080,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/NutMat_baseColor.jpeg"
+    },
+    {
+      "uri": "textures/NutMat_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/NutMat_normal.png"
+    }
+  ],
+  "materials": [
+    {
+      "name": "NutMat",
+      "normalTexture": {
+        "index": 2
+      },
+      "occlusionTexture": {
+        "index": 1
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "HexNut_NutMat_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3,
+            "TEXCOORD_1": 4,
+            "TEXCOORD_2": 5,
+            "TEXCOORD_3": 6,
+            "TEXCOORD_4": 7
+          },
+          "indices": 8,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        0.009999999776482582,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.2204459996194763e-18,
+        -0.009999999776482582,
+        0.0,
+        0.0,
+        0.009999999776482582,
+        2.2204459996194763e-18,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "6d5743ff5f3f41a398860e4c0e8662eb.fbx"
+    },
+    {
+      "children": [
+        3
+      ],
+      "name": "RootNode"
+    },
+    {
+      "children": [
+        4
+      ],
+      "name": "HexNut"
+    },
+    {
+      "mesh": 0,
+      "name": "HexNut_NutMat_0"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 33071,
+      "wrapT": 33071
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    }
+  ]
+}

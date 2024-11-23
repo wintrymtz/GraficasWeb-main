@@ -101,7 +101,8 @@ export class GameManager {
 
 
     saveScoreToDatabase(points) {
-        const playerName = localStorage.getItem('playerName'); 
+        const playerName = localStorage.getItem('playerName'); // Asegúrate de que el jugador haya iniciado sesión correctamente
+
         if (!playerName) {
             console.error("Error: No se encontró el nombre del jugador en localStorage.");
             return;
@@ -133,31 +134,36 @@ export class GameManager {
             .catch((error) => {
                 console.error('Error al actualizar los puntos:', error);
             });
-        
-        
-        
+
+
+
     }
 
     finishGame() {
-      
+        if (this.playerAlive) {
             localStorage.setItem('score', this.points);
             localStorage.setItem('level', this.level);
             localStorage.setItem('gameMode', this.gameMode);
             this.saveScoreToDatabase(this.points);
-      
+        } else {
+            window.location.reload();
+        }
+
+
     }
 
     damage(damage) {
         if (this.canBeDamaged == false) {
-            return;
+            return false;
         }
         this.vida -= damage;
         this.updateVida(this.vida);
         if (this.vida <= 0) {
-            this.alive = false;
+            this.playerAlive = false;
             this.vida = 0;
             this.finishGame();
         }
+        return true;
     }
 
     darVida(vida) {

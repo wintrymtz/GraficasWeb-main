@@ -1,0 +1,11 @@
+Model Information:
+* title:	Hex Nut
+* source:	https://sketchfab.com/3d-models/hex-nut-ad975a4b143246919951f52dddbbd0ae
+* author:	j-conrad (https://sketchfab.com/j-conrad)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Hex Nut" (https://sketchfab.com/3d-models/hex-nut-ad975a4b143246919951f52dddbbd0ae) by j-conrad (https://sketchfab.com/j-conrad) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

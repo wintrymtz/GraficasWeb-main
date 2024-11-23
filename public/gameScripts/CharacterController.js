@@ -10,7 +10,7 @@ export class CharacterController {
         this.Object3d = Object3d;
         this.camera = camera;
         this.input = new InputController(type);
-        this.velocity = 60;
+        this.velocity = 120; //60
         this.currentSpeed = 0;
         this.gravity = true;
         this.gravitySpeed = 16;
@@ -42,7 +42,7 @@ export class CharacterController {
         this.floorDistanceTolerance = 4;
         this.canJump = true;
         this.isJumping = false;
-        this.jumpForce = 300;
+        this.jumpForce = 400; //300
 
 
         //colisionador :)
