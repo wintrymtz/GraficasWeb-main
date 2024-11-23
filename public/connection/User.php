@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $servername = "localhost";
 $username = "root";
-$password = "";
+$password = "Guillermo2004.";
 $dbname = "gcw";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
