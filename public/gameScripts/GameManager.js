@@ -15,6 +15,7 @@ export class GameManager {
         this.difficulty = localStorage.getItem('difficulty') || 'normal';
         this.amountCoins = 0;
         this.currentCoins = 0;
+        this.vida = 3;
         console.log(this.difficulty);
         if (this.difficulty === "hard") {
             document.getElementById('vida').src = "./recursos/UI/1.png";
@@ -48,7 +49,6 @@ export class GameManager {
 
         this.canBeDamaged = true;
 
-        this.vida = 3;
         this.updateVida(this.vida);
 
         GameManager.instance = this; // Guarda la única instancia
