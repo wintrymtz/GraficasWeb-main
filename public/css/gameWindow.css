@@ -130,3 +130,29 @@ canvas {
 #gameUI p {
     margin: 0;
 }
+
+
+#button-login,
+#button-logout {
+    position: fixed;
+    z-index: 2000; 
+    top: 20px; 
+    left: 120px;
+    padding: 5px 20px;
+    background-color: #6589ff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#button-login:hover,
+#button-logout:hover{
+    
+    background-color: #2c53d4;
+}
+
+#button-logout {
+    top: 60px; 
+}

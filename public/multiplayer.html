@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./css/gameWindow.css" rel="stylesheet">
+    <title>MultiJugador</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="button-login">Acceder</button>
+    <button id="button-logout">Salir</button>
+
+    <div id="pauseMenu">
+      <h2>Menú de Pausa</h2>
+      <button class="menu-button" onclick="resumeGame()">Reanudar</button>
+      <button class="menu-button" onclick="openSettings()">Configuración</button>
+      <button class="menu-button" onclick="openHelp()">Ayuda</button>
+      <button class="menu-button" onclick="exitGame()">Salir</button>
+    </div>
+    <div id="gameUI">
+      <img id="vida" src="./recursos/UI/3.png">
+      <div id="timer">
+        <p>Tiempo: <span id="time">0</span> s</p>
+        <p>Puntaje: <span id="score">0</span></p>
+      </div>
+    </div>
+  
+  
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./gameScripts/three.module.js"
+        }
+      }
+    </script>
+    <script type="module" src="./js/gameWindow.js"></script>
+
+    <script
+      async
+      defer
+      crossorigin="anonymous"
+      src="https://connect.facebook.net/en_US/sdk.js"></script>
+    <script src="./js/facebookPost.js"></script>
+
+    <script type="module">
+      import * as THREE from "./gameScripts/three.module.js";
+      import { OrbitControls } from "./gameScripts/OrbitControls.js";
+      import { STLLoader } from "./gameScripts/STLLoader.js";
+      import { GLTFLoader } from "./gameScripts/GLTFLoader.js";
+      import { FBXLoader } from "./gameScripts/FBXLoader.js"; // Cambia la ruta según corresponda
+
+      import { CharacterController } from "./gameScripts/CharacterController.js";
+      import { Collider } from "./gameScripts/Colliders.js";
+
+      import { Collectable } from "./gameScripts/Collectable.js";
+      import { GameManager } from "./gameScripts/GameManager.js";
+      import { Animator } from "./gameScripts/Animator.js";
+      
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+
+      // Import Database Firebase configuration
+      import {
+        getDatabase,
+        ref,
+        set,
+        onValue,
+      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
+
+      import {
+        getAuth,
+        signInWithPopup,
+        signOut,
+        GoogleAuthProvider,
+      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyC_f41viiyJN7GtXhN7eAhtSkdyLUwVyuA",
+        authDomain: "coordenadas-9ab1c.firebaseapp.com",
+        databaseURL: "https://coordenadas-9ab1c-default-rtdb.firebaseio.com",
+        projectId: "coordenadas-9ab1c",
+        storageBucket: "coordenadas-9ab1c.firebasestorage.app",
+        messagingSenderId: "875740868020",
+        appId: "1:875740868020:web:87e178b3c14632562b96e1",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const provider = new GoogleAuthProvider();
+      const auth = getAuth();
+      const db = getDatabase();
+
+      const buttonLogin = document.getElementById("button-login");
+      const buttonLogut = document.getElementById("button-logout");
+
+      let currentUser = {};
+      async function login() {
+        await signInWithPopup(auth, provider)
+          .then((result) => {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+            // The signed-in user info.
+            currentUser = result.user;
+            writeUserData(result.user.uid, 0, 0);
+            const user = result.user;
+            console.log(user);
+          })
+          .catch((error) => {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.customData.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            console.log(error);
+            // ...
+          });
+      }
+
+      buttonLogin.addEventListener("click", async () => {
+        await login();
+      });
+
+      buttonLogut.addEventListener("click", async () => {
+        await signOut(auth)
+          .then(() => {
+            console.log("Sign-out successful.");
+          })
+          .catch((error) => {
+            console.error("An error happened.");
+          });
+      });
+
+      // Leer
+      // Leer datos de los jugadores desde Firebase y actualizar en la escena
+const starCountRef = ref(db, "jugadores");
+onValue(starCountRef, (snapshot) => {
+  const data = snapshot.val();
+
+  Object.entries(data).forEach(([key, value]) => {
+    console.log(`${key} ${value.x} ${value.z}`);
+    let jugador = scene.getObjectByName(key);
+
+    // Si el jugador no existe en la escena, se agrega el modelo GLB
+    if (!jugador) {
+      const loader = new GLTFLoader();
+      loader.load("./recursos/player5.glb", (gltf) => {
+        const model = gltf.scene;
+        model.scale.set(400, 400, 400); // Ajusta la escala según tus necesidades
+        model.position.set(480, 350, 380); // Posición inicial
+        model.rotation.y = -1.5708; // Orientación inicial
+        model.name = key; // Asigna el nombre del usuario como ID en la escena
+        scene.add(model);
+      });
+    } else {
+      // Si el jugador ya existe, solo se actualizan las coordenadas
+      jugador.position.x = value.x;
+      jugador.position.z = value.z;
+    }
+  });
+});
+
+      // Escribir
+      function writeUserData(userId, positionX, positionZ) {
+        set(ref(db, "jugadores/" + userId), {
+          x: positionX,
+          z: positionZ,
+        });
+      }
+
+      // THREE.JS
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color("#34495E");
+
+      const camera = new THREE.PerspectiveCamera(
+      60,
+      window.innerWidth / window.innerHeight
+    );
+    camera.position.set(497, 1280, 700);
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    // const cameraControl = new OrbitControls(camera, renderer.domElement);
+
+    const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+    scene.add(hemisphereLight);
+
+
+     
+    // INIT
+    let ColArray = [];
+    let collectableArray = [];
+    let clock = new THREE.Clock(true);
+
+    let robot = new GLTFLoader();
+    let robot_model;
+    let robotObj;
+    let orbitControl1;
+    let player2Exist = false;
+    let loaded = false;
+    let modelObj;
+    let player;
+    let starModel;
+    let playerAnimator;
+
+    let gameManager = new GameManager();
+    let spawnPoint = new THREE.Vector3(480, 350, 380);
+
+    if (gameManager.difficulty === 'hard') {
+      const light = new THREE.AmbientLight("#ff5a5a", 0.5); // soft white light
+      scene.add(light);
+    } else {
+      const light = new THREE.AmbientLight(0x404040); // soft white light
+      scene.add(light);
+    }
+
+
+
+    function loadPLayer() {
+
+      robot.load("./recursos/player5.glb", function (model) {
+        // console.log(model);
+        robot_model = model;
+        robotObj = model.scene;
+        robotObj.scale.set(400, 400, 400);
+        robotObj.position.copy(spawnPoint);
+        robotObj.rotation.y = -1.5708;
+        scene.add(robotObj);
+        let playerMixer = new THREE.AnimationMixer(robotObj);
+        // const action = mixer3.clipAction(model.animations[0]);
+        // action.play();
+
+        let colision = new Collider(robotObj, 1, true);
+        ColArray.push(colision);
+        colision.renderHelper(scene);
+        colision.translate(0, 6, 0);
+        colision.scaleY(15);
+        colision.scaleX(8);
+        colision.scaleZ(4);
+        player = new CharacterController(robotObj, camera, 1, colision);
+
+
+        playerAnimator = new Animator(playerMixer, model.animations);
+        player.setAnimator(playerAnimator);
+
+        orbitControl1 = new OrbitControls(camera, renderer.domElement);
+        orbitControl1.maxDistance = 100;
+        orbitControl1.enablePan = false;
+        // cameraControl.maxPolarAngle
+        orbitControl1.minDistance = 20;
+        orbitControl1.target = player.Object3d.position;
+
+        const sound = new Audio('recursos/sound/game.mp3');
+        sound.volume = gameManager.musicVolume;
+        sound.loop = true;
+        sound.play();
+      });
+    }
+
+
+
+
+
+    ///MAPA 3
+
+    ///MAPA 3
+
+    const pivotHelix = new THREE.Object3D();
+    pivotHelix.position.set(0, 0, 0);
+    scene.add(pivotHelix);
+
+    let helix1;
+    let helix2;
+
+    const pivotPlatform1 = new THREE.Object3D();
+    pivotPlatform1.position.set(0, 0, 0);
+    scene.add(pivotPlatform1);
+
+    let direction1 = 1;
+    let direction2 = 1;
+    let direction3 = 1;
+
+    const pivotPlatform2 = new THREE.Object3D();
+    pivotPlatform2.position.set(0, 0, 0);
+    scene.add(pivotPlatform2);
+
+    const pivotPlatform3 = new THREE.Object3D();
+    pivotPlatform3.position.set(0, 0, 0);
+    scene.add(pivotPlatform3);
+
+
+
+    let objects = [];
+
+    const fbxLoader = new FBXLoader();
+    fbxLoader.load(
+      './recursos/map3/map3_v2.fbx', // Ruta al archivo FBX
+      function (object) {
+        // Aquí puedes ajustar la escala y posición del objeto
+        object.scale.set(5, 5, 5); // Ajusta según sea necesario
+        object.position.set(0, 0, 0); // Ajusta según sea necesario
+        modelObj = object;
+
+        // Recorre todos los materiales del objeto
+
+        if (!object) {
+          throw new Error('El objeto no fue cargado correctamente.');
+        }
+
+        object.traverse((child) => {
+          if (child) {
+            objects.push(child);
+          }
+
+          if (child.name === 'pPlane1') {
+            let colision = new Collider(child, 2);
+            colision.renderHelper(scene);
+            ColArray.push(colision);
+            // console.log(child.name)
+
+          } else if (child.name != '') {
+            let colision = new Collider(child, 1, true);
+            colision.renderHelper(scene);
+            ColArray.push(colision);
+            // console.log(child.name)
+
+          }
+          // console.log(child)
+
+        });
+        // ColArray[0].renderHelper(scene)
+
+        // scene.add(modelObj); // Agrega el objeto a la escena
+        check(objects);
+
+      },
+      (xhr) => {
+        console.log((xhr.loaded / xhr.total));
+
+        if (xhr.loaded / xhr.total >= 1) {
+          loadPLayer();
+        }
+      },
+      (error) => {
+        console.error('Error al cargar el modelo:', error);
+      }
+    );
+
+    function check(obj) {
+      console.log(obj)
+
+
+
+      obj.forEach(e => {
+        console.log(e.name)
+
+        switch (e.name) {
+
+          case 'Helix1':
+          case 'Helix2':
+          case 'Platform1':
+          case 'Platform2':
+            if (e.name == 'Helix1') {
+              helix1 = e;
+            } else if (e.name == 'Helix2') {
+              helix2 = e;
+            }
+            pivotHelix.add(e);
+            break;
+
+          case 'pCylinder3':
+          case 'pCylinder4':
+            pivotPlatform1.add(e);
+            break;
+          case 'pCylinder2':
+          case 'pCylinder6':
+            pivotPlatform2.add(e);
+            break;
+          case 'pCylinder1':
+          case 'pCylinder5':
+            pivotPlatform3.add(e);
+            break;
+
+          default:
+            scene.add(e);
+            break;
+
+        }
+      })
+      // obj.traverse((child) => {
+      //   scene.remove()
+      //   console.log(child)
+
+      // })
+
+    }
+
+
+
+     //ESTRELLA   
+     const Estrella = new GLTFLoader();
+    Estrella.load(
+      "./recursos/Mapa 1/Gold_Star/StarGLTF.glb",
+      function (gltf) {
+        const model = gltf.scene;
+        model.position.set(0, 530, -20);
+        model.scale.set(50, 50, 50);
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./recursos/Mapa 1/Gold_Star/texture_gold.jpg');
+
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.y = -1;
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = texture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        scene.add(model);
+        starModel = model;
+
+
+        let colision = new Collider(model, 3, true);
+        colision.renderHelper(scene);
+        ColArray.push(colision);
+
+        let star_c = new Collectable(2, colision);
+        collectableArray.push(star_c);
+
+      }
+    );
+
+
+
+    
+
+    //MONEDAS
+
+    // Modelo y texturas
+    const monedaPath = "./recursos/Gold_Coin/GoldCoin.fbx";
+    const textureLoader = new THREE.TextureLoader();
+    const coinImg = textureLoader.load("./recursos/Gold_Coin/MonedaText.png");
+    const monedasArray = [];
+
+    // Función para crear monedas
+    function crearMoneda(x, y, z) {
+      const monedaLoader = new FBXLoader();
+    
+      monedaLoader.load(monedaPath, function (fbx) {
+        fbx.position.set(x, y, z);
+        fbx.scale.set(1.4, 1.4, 1.4);
+      
+        fbx.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = coinImg;
+            child.material.needsUpdate = true;
+          }
+        });
+      
+        //Aplicar colisión
+        let col = new Collider(fbx, 3, true);
+        ColArray.push(col);
+        col.renderHelper(scene);
+      
+        //Aplicar coleccionable
+        let coinCollectable = new Collectable(0, col);
+        collectableArray.push(coinCollectable);
+      
+        
+        scene.add(fbx);
+        monedasArray.push(fbx);
+      });
+    }
+
+    // Animaciomn de monedas
+    function animarMonedas() {
+      monedasArray.forEach(moneda => {
+        moneda.rotation.y += 0.03; 
+      });
+    
+      requestAnimationFrame(animarMonedas);
+    }
+
+    animarMonedas();
+
+    // Crear monedas
+    crearMoneda(490, 350, 320); //Moneda inicial
+
+    crearMoneda(260, 360, -570);  //Tubos amarillos
+    crearMoneda(-470, 390, 260);
+    crearMoneda(-390, 360, 400);
+
+    crearMoneda(-480, 385, -460); //Plataforma oscura
+    crearMoneda(-440, 385, -480);
+    
+    crearMoneda(150, 300, 150); //Plataformas giratorias
+    crearMoneda(150, 300, -150);
+    crearMoneda(-150, 300, -150);
+    crearMoneda(-150, 300, 150);
+    
+    //Plataformas subiendo 3
+    crearMoneda(-300, 280, -50);
+    crearMoneda(-300, 340, -50);
+    crearMoneda(-300, 400, -50);
+
+    //Plataforma subiendo 4
+    crearMoneda(0, 280, -180);
+    crearMoneda(0, 340, -180);
+    crearMoneda(0, 400, -180);
+
+    
+
+    if (gameManager.difficulty === 'hard'){
+      crearMoneda(-340, 350, -510); //Tubos negros
+      crearMoneda(-290, 350, -500);
+      crearMoneda(-480, 330, -350);
+      crearMoneda(300, 340, -530);
+
+      //Plataformas subiendo 1
+      crearMoneda(-200, 340, -50);
+      crearMoneda(-200, 400, -50);
+      crearMoneda(-200, 280, -50);
+
+      //Plataformas subiendo 2
+      crearMoneda(-100, 280, -50);
+      crearMoneda(-100, 340, -50);
+      crearMoneda(-100, 400, -50);
+
+      //Plataforma subiendo 4
+      crearMoneda(0, 280, -270);
+      crearMoneda(0, 340, -270);
+      crearMoneda(0, 400, -270);
+
+      //Plataforma subiendo 5
+      crearMoneda(0, 280, -360);
+      crearMoneda(0, 340, -360);
+      crearMoneda(0, 400, -360);
+    }
+
+
+
+
+    
+
+    document.onkeydown = function (e) {
+    const jugadorActual = scene.getObjectByName(currentUser.uid);
+    console.log(currentUser.uid);
+
+    if (e.keyCode == 37) {
+      jugadorActual.position.x -= 10;
+    }
+
+    if (e.keyCode == 39) {
+      jugadorActual.position.x += 10;
+    }
+
+    if (e.keyCode == 38) {
+      jugadorActual.position.z -= 10;
+    }
+
+    if (e.keyCode == 40) {
+      jugadorActual.position.z += 10;
+    }
+
+    writeUserData(
+      currentUser.uid,
+      jugadorActual.position.x,
+      jugadorActual.position.z
+      );
+    };
+
+      
+
+      const cameraControl = new OrbitControls(camera, renderer.domElement);
+
+
+
+
+      // animate();
+
+    function Update() {
+      const delta = clock.getDelta();
+      scene.traverse(child => {
+        if (typeof child.update === 'function') child.update(delta);
+      })
+
+      if (player) {
+        // mixer3.update(0.01);
+        playerAnimator.update();
+        player.update(delta, 1, ColArray);
+
+
+        if (player.Object3d.position.y <= -320) {
+          console.log('damage');
+          gameManager.damage(1);
+          player.Object3d.position.copy(spawnPoint);
+          orbitControl1.update();
+          camera.position.y = player.Object3d.position.y + 5;
+          camera.lookAt(player.Object3d.position)
+        }
+
+        if (gameManager.gravityItemStatus) {
+          player.gravitySpeed = 8;
+        } else {
+          player.gravitySpeed = 16;
+        }
+      }
+
+      // if (player2Exist) {
+      //   player2.update(delta, 1, ColArray);
+      // }
+
+      //Animacion de estrella
+      if (starModel) {
+        starModel.rotation.y += 0.03;
+      }
+
+      //Se actualiza en el controlador
+      ColArray.forEach((e) => {
+        if (!e.isStatic) {
+          e.update();
+        }
+      });
+
+      //Se actualizan los objetos a recojer
+      collectableArray.forEach((e) => {
+        e.update(scene);
+      });
+
+
+
+      pivotHelix.rotation.y += 0.005 * gameManager.extraVelocity;
+
+      pivotPlatform1.position.y += 0.5 * direction1 * gameManager.extraVelocity;
+      pivotPlatform2.position.y += 1 * direction2 * gameManager.extraVelocity;
+      pivotPlatform3.position.y += 0.8 * direction3 * gameManager.extraVelocity;
+
+      if (pivotPlatform1.position.y >= 250) {
+        direction1 = -1;
+      } else if (pivotPlatform1.position.y <= -20) {
+        direction1 = 1;
+      }
+
+      if (pivotPlatform2.position.y >= 250) {
+        direction2 = -1;
+      } else if (pivotPlatform2.position.y <= -20) {
+        direction2 = 1;
+      }
+
+      if (pivotPlatform3.position.y >= 250) {
+        direction3 = -1;
+      } else if (pivotPlatform3.position.y <= -20) {
+        direction3 = 1;
+      }
+
+      if (helix1 !== undefined && helix2) {
+        helix1.rotation.z += 0.2 * gameManager.extraVelocity;
+        helix2.rotation.z += 0.2 * gameManager.extraVelocity;
+      }
+
+      // pivotPlatform2.position.y += 0.5;
+      // pivotPlatform3.position.y += 0.7;
+
+    }
+
+
+    function Render() {
+      if (player2Exist) {
+        // Configuración para la primera cámara
+        renderer.setViewport(0, window.innerHeight / 2, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissor(0, window.innerHeight / 2, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissorTest(true);
+        renderer.render(scene, camera);
+
+        // Configuración para la segunda cámara
+        renderer.setViewport(0, 0, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissor(0, 0, window.innerWidth, window.innerHeight / 2);
+        renderer.setScissorTest(true);
+        renderer.render(scene, camera2);
+
+        // Desactivar scissor al finalizar
+        renderer.setScissorTest(false);
+      } else {
+        renderer.render(scene, camera);
+      }
+    }
+
+    renderer.setAnimationLoop(() => {
+      Render();
+      Update();
+    })
+
+
+
+    
+
+      function animate() {
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    </script>
+
+    
+
+
+  </body>
+</html>

@@ -32,6 +32,10 @@ function updateUI() {
         //score += 10; // Incrementar puntaje
         document.getElementById('time').textContent = time;
         // document.getElementById('score').textContent = score;
+        if (time <= 0) {
+            alert('Perdiste!!');
+            window.location.href = './MainMenu2.html';
+        }
     }
 }
 
