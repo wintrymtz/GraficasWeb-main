@@ -166,9 +166,9 @@ export class GameManager {
             localStorage.setItem('level', this.level);
             localStorage.setItem('gameMode', this.gameMode);
 
-            if (this.gameMode = 0) { //modo hisotira
+            if (this.gameMode == 0) { //modo hisotira
 
-            } else if (this.gameMode = 1) {  //modo contrarreloj
+            } else if (this.gameMode == 1) {  //modo contrarreloj
                 alert('se acabó el contrarreloj');
                 window.location.href = "./MainMenu2.html";
             }

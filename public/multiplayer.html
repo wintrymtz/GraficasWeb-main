@@ -1,186 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="./css/gameWindow.css" rel="stylesheet">
-    <title>MultiJugador</title>
-    <style>
-      body {
-        margin: 0;
-      }
-    </style>
-  </head>
-  <body>
-    <button id="button-login">Acceder</button>
-    <button id="button-logout">Salir</button>
 
-    <div id="pauseMenu">
-      <h2>Menú de Pausa</h2>
-      <button class="menu-button" onclick="resumeGame()">Reanudar</button>
-      <button class="menu-button" onclick="openSettings()">Configuración</button>
-      <button class="menu-button" onclick="openHelp()">Ayuda</button>
-      <button class="menu-button" onclick="exitGame()">Salir</button>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./css/gameWindow.css" rel="stylesheet">
+  <title>MultiJugador</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <button id="button-login">Acceder</button>
+  <button id="button-logout">Salir</button>
+
+  <div id="pauseMenu">
+    <h2>Menú de Pausa</h2>
+    <button class="menu-button" onclick="resumeGame()">Reanudar</button>
+    <button class="menu-button" onclick="openSettings()">Configuración</button>
+    <button class="menu-button" onclick="openHelp()">Ayuda</button>
+    <button class="menu-button" onclick="exitGame()">Salir</button>
+  </div>
+  <div id="gameUI">
+    <img id="vida" src="./recursos/UI/3.png">
+    <div id="timer">
+      <p>Tiempo: <span id="time">0</span> s</p>
+      <p>Puntaje: <span id="score">0</span></p>
     </div>
-    <div id="gameUI">
-      <img id="vida" src="./recursos/UI/3.png">
-      <div id="timer">
-        <p>Tiempo: <span id="time">0</span> s</p>
-        <p>Puntaje: <span id="score">0</span></p>
-      </div>
-    </div>
-  
-  
-    <script type="importmap">
+  </div>
+
+
+  <script type="importmap">
       {
         "imports": {
           "three": "./gameScripts/three.module.js"
         }
       }
     </script>
-    <script type="module" src="./js/gameWindow.js"></script>
+  <script type="module" src="./js/gameWindow.js"></script>
 
-    <script
-      async
-      defer
-      crossorigin="anonymous"
-      src="https://connect.facebook.net/en_US/sdk.js"></script>
-    <script src="./js/facebookPost.js"></script>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+  <script src="./js/facebookPost.js"></script>
 
-    <script type="module">
-      import * as THREE from "./gameScripts/three.module.js";
-      import { OrbitControls } from "./gameScripts/OrbitControls.js";
-      import { STLLoader } from "./gameScripts/STLLoader.js";
-      import { GLTFLoader } from "./gameScripts/GLTFLoader.js";
-      import { FBXLoader } from "./gameScripts/FBXLoader.js"; // Cambia la ruta según corresponda
+  <script type="module">
+    import * as THREE from "./gameScripts/three.module.js";
+    import { OrbitControls } from "./gameScripts/OrbitControls.js";
+    import { STLLoader } from "./gameScripts/STLLoader.js";
+    import { GLTFLoader } from "./gameScripts/GLTFLoader.js";
+    import { FBXLoader } from "./gameScripts/FBXLoader.js"; // Cambia la ruta según corresponda
 
-      import { CharacterController } from "./gameScripts/CharacterController.js";
-      import { Collider } from "./gameScripts/Colliders.js";
+    import { CharacterController } from "./gameScripts/CharacterController.js";
+    import { Collider } from "./gameScripts/Colliders.js";
 
-      import { Collectable } from "./gameScripts/Collectable.js";
-      import { GameManager } from "./gameScripts/GameManager.js";
-      import { Animator } from "./gameScripts/Animator.js";
-      
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { Collectable } from "./gameScripts/Collectable.js";
+    import { GameManager } from "./gameScripts/GameManager.js";
+    import { Animator } from "./gameScripts/Animator.js";
 
-      // Import Database Firebase configuration
-      import {
-        getDatabase,
-        ref,
-        set,
-        onValue,
-      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 
-      import {
-        getAuth,
-        signInWithPopup,
-        signOut,
-        GoogleAuthProvider,
-      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    // Import Database Firebase configuration
+    import {
+      getDatabase,
+      ref,
+      set,
+      onValue,
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 
-      // Your web app's Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyC_f41viiyJN7GtXhN7eAhtSkdyLUwVyuA",
-        authDomain: "coordenadas-9ab1c.firebaseapp.com",
-        databaseURL: "https://coordenadas-9ab1c-default-rtdb.firebaseio.com",
-        projectId: "coordenadas-9ab1c",
-        storageBucket: "coordenadas-9ab1c.firebasestorage.app",
-        messagingSenderId: "875740868020",
-        appId: "1:875740868020:web:87e178b3c14632562b96e1",
-      };
+    import {
+      getAuth,
+      signInWithPopup,
+      signOut,
+      GoogleAuthProvider,
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const provider = new GoogleAuthProvider();
-      const auth = getAuth();
-      const db = getDatabase();
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_f41viiyJN7GtXhN7eAhtSkdyLUwVyuA",
+      authDomain: "coordenadas-9ab1c.firebaseapp.com",
+      databaseURL: "https://coordenadas-9ab1c-default-rtdb.firebaseio.com",
+      projectId: "coordenadas-9ab1c",
+      storageBucket: "coordenadas-9ab1c.firebasestorage.app",
+      messagingSenderId: "875740868020",
+      appId: "1:875740868020:web:87e178b3c14632562b96e1",
+    };
 
-      const buttonLogin = document.getElementById("button-login");
-      const buttonLogut = document.getElementById("button-logout");
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    const db = getDatabase();
 
-      let currentUser = {};
-      async function login() {
-        await signInWithPopup(auth, provider)
-          .then((result) => {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential.accessToken;
-            // The signed-in user info.
-            currentUser = result.user;
-            writeUserData(result.user.uid, 0, 0);
-            const user = result.user;
-            console.log(user);
-          })
-          .catch((error) => {
-            // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.customData.email;
-            // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
-            console.log(error);
-            // ...
-          });
-      }
+    const buttonLogin = document.getElementById("button-login");
+    const buttonLogut = document.getElementById("button-logout");
 
-      buttonLogin.addEventListener("click", async () => {
-        await login();
-      });
-
-      buttonLogut.addEventListener("click", async () => {
-        await signOut(auth)
-          .then(() => {
-            console.log("Sign-out successful.");
-          })
-          .catch((error) => {
-            console.error("An error happened.");
-          });
-      });
-
-      // Leer
-      // Leer datos de los jugadores desde Firebase y actualizar en la escena
-const starCountRef = ref(db, "jugadores");
-onValue(starCountRef, (snapshot) => {
-  const data = snapshot.val();
-
-  Object.entries(data).forEach(([key, value]) => {
-    console.log(`${key} ${value.x} ${value.z}`);
-    let jugador = scene.getObjectByName(key);
-
-    // Si el jugador no existe en la escena, se agrega el modelo GLB
-    if (!jugador) {
-      const loader = new GLTFLoader();
-      loader.load("./recursos/player5.glb", (gltf) => {
-        const model = gltf.scene;
-        model.scale.set(400, 400, 400); // Ajusta la escala según tus necesidades
-        model.position.set(480, 350, 380); // Posición inicial
-        model.rotation.y = -1.5708; // Orientación inicial
-        model.name = key; // Asigna el nombre del usuario como ID en la escena
-        scene.add(model);
-      });
-    } else {
-      // Si el jugador ya existe, solo se actualizan las coordenadas
-      jugador.position.x = value.x;
-      jugador.position.z = value.z;
-    }
-  });
-});
-
-      // Escribir
-      function writeUserData(userId, positionX, positionZ) {
-        set(ref(db, "jugadores/" + userId), {
-          x: positionX,
-          z: positionZ,
+    let currentUser = {};
+    async function login() {
+      await signInWithPopup(auth, provider)
+        .then((result) => {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          // The signed-in user info.
+          currentUser = result.user;
+          writeUserData(result.user.uid, 0, 0);
+          const user = result.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          // Handle Errors here.
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // The email of the user's account used.
+          const email = error.customData.email;
+          // The AuthCredential type that was used.
+          const credential = GoogleAuthProvider.credentialFromError(error);
+          console.log(error);
+          // ...
         });
-      }
+    }
 
-      // THREE.JS
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color("#34495E");
+    buttonLogin.addEventListener("click", async () => {
+      await login();
+    });
 
-      const camera = new THREE.PerspectiveCamera(
+    buttonLogut.addEventListener("click", async () => {
+      await signOut(auth)
+        .then(() => {
+          console.log("Sign-out successful.");
+        })
+        .catch((error) => {
+          console.error("An error happened.");
+        });
+    });
+
+    // Leer
+    // Leer datos de los jugadores desde Firebase y actualizar en la escena
+    const starCountRef = ref(db, "jugadores");
+    onValue(starCountRef, (snapshot) => {
+      const data = snapshot.val();
+
+      Object.entries(data).forEach(([key, value]) => {
+        console.log(`${key} ${value.x} ${value.z} ${value.y}`);
+        let jugador = scene.getObjectByName(key);
+        console.log('ID', key)
+
+        // Si el jugador no existe en la escena, se agrega el modelo GLB
+        if (!jugador) {
+          const loader = new GLTFLoader();
+          loader.load("./recursos/player5.glb", (gltf) => {
+            const model = gltf.scene;
+            model.scale.set(400, 400, 400); // Ajusta la escala según tus necesidades
+            model.position.set(480, 350, 380); // Posición inicial
+            model.rotation.y = -1.5708; // Orientación inicial
+            model.name = key; // Asigna el nombre del usuario como ID en la escena
+            scene.add(model);
+          });
+        } else {
+          // Si el jugador ya existe, solo se actualizan las coordenadas
+          jugador.position.x = value.x;
+          jugador.position.z = value.z;
+          jugador.position.y = value.y;
+        }
+      });
+    });
+
+    // Escribir
+    function writeUserData(userId, positionX, positionZ, positionY) {
+      set(ref(db, "jugadores/" + userId), {
+        x: positionX,
+        z: positionZ,
+        y: positionY,
+      });
+    }
+
+    // THREE.JS
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color("#34495E");
+
+    const camera = new THREE.PerspectiveCamera(
       60,
       window.innerWidth / window.innerHeight
     );
@@ -195,7 +196,7 @@ onValue(starCountRef, (snapshot) => {
     scene.add(hemisphereLight);
 
 
-     
+
     // INIT
     let ColArray = [];
     let collectableArray = [];
@@ -406,8 +407,8 @@ onValue(starCountRef, (snapshot) => {
 
 
 
-     //ESTRELLA   
-     const Estrella = new GLTFLoader();
+    //ESTRELLA   
+    const Estrella = new GLTFLoader();
     Estrella.load(
       "./recursos/Mapa 1/Gold_Star/StarGLTF.glb",
       function (gltf) {
@@ -443,7 +444,7 @@ onValue(starCountRef, (snapshot) => {
 
 
 
-    
+
 
     //MONEDAS
 
@@ -456,28 +457,28 @@ onValue(starCountRef, (snapshot) => {
     // Función para crear monedas
     function crearMoneda(x, y, z) {
       const monedaLoader = new FBXLoader();
-    
+
       monedaLoader.load(monedaPath, function (fbx) {
         fbx.position.set(x, y, z);
         fbx.scale.set(1.4, 1.4, 1.4);
-      
+
         fbx.traverse((child) => {
           if (child.isMesh) {
             child.material.map = coinImg;
             child.material.needsUpdate = true;
           }
         });
-      
+
         //Aplicar colisión
         let col = new Collider(fbx, 3, true);
         ColArray.push(col);
         col.renderHelper(scene);
-      
+
         //Aplicar coleccionable
         let coinCollectable = new Collectable(0, col);
         collectableArray.push(coinCollectable);
-      
-        
+
+
         scene.add(fbx);
         monedasArray.push(fbx);
       });
@@ -486,9 +487,9 @@ onValue(starCountRef, (snapshot) => {
     // Animaciomn de monedas
     function animarMonedas() {
       monedasArray.forEach(moneda => {
-        moneda.rotation.y += 0.03; 
+        moneda.rotation.y += 0.03;
       });
-    
+
       requestAnimationFrame(animarMonedas);
     }
 
@@ -503,12 +504,12 @@ onValue(starCountRef, (snapshot) => {
 
     crearMoneda(-480, 385, -460); //Plataforma oscura
     crearMoneda(-440, 385, -480);
-    
+
     crearMoneda(150, 300, 150); //Plataformas giratorias
     crearMoneda(150, 300, -150);
     crearMoneda(-150, 300, -150);
     crearMoneda(-150, 300, 150);
-    
+
     //Plataformas subiendo 3
     crearMoneda(-300, 280, -50);
     crearMoneda(-300, 340, -50);
@@ -519,9 +520,9 @@ onValue(starCountRef, (snapshot) => {
     crearMoneda(0, 340, -180);
     crearMoneda(0, 400, -180);
 
-    
 
-    if (gameManager.difficulty === 'hard'){
+
+    if (gameManager.difficulty === 'hard') {
       crearMoneda(-340, 350, -510); //Tubos negros
       crearMoneda(-290, 350, -500);
       crearMoneda(-480, 330, -350);
@@ -551,43 +552,38 @@ onValue(starCountRef, (snapshot) => {
 
 
 
-    
+
 
     document.onkeydown = function (e) {
-    const jugadorActual = scene.getObjectByName(currentUser.uid);
-    console.log(currentUser.uid);
+      const jugadorActual = scene.getObjectByName(currentUser.uid);
+      console.log(currentUser.uid);
 
-    if (e.keyCode == 37) {
-      jugadorActual.position.x -= 10;
-    }
+      if (e.keyCode == 37) {
+        jugadorActual.position.x -= 10;
+      }
 
-    if (e.keyCode == 39) {
-      jugadorActual.position.x += 10;
-    }
+      if (e.keyCode == 39) {
+        jugadorActual.position.x += 10;
+      }
 
-    if (e.keyCode == 38) {
-      jugadorActual.position.z -= 10;
-    }
+      if (e.keyCode == 38) {
+        jugadorActual.position.z -= 10;
+      }
 
-    if (e.keyCode == 40) {
-      jugadorActual.position.z += 10;
-    }
+      if (e.keyCode == 40) {
+        jugadorActual.position.z += 10;
+      }
 
-    writeUserData(
-      currentUser.uid,
-      jugadorActual.position.x,
-      jugadorActual.position.z
-      );
     };
 
-      
-
-      const cameraControl = new OrbitControls(camera, renderer.domElement);
 
 
+    // const cameraControl = new OrbitControls(camera, renderer.domElement);
 
 
-      // animate();
+
+
+    // animate();
 
     function Update() {
       const delta = clock.getDelta();
@@ -600,6 +596,13 @@ onValue(starCountRef, (snapshot) => {
         playerAnimator.update();
         player.update(delta, 1, ColArray);
 
+
+        writeUserData(
+          currentUser.uid,
+          player.Object3d.position.x,
+          player.Object3d.position.z,
+          player.Object3d.position.y,
+        );
 
         if (player.Object3d.position.y <= -320) {
           console.log('damage');
@@ -703,18 +706,19 @@ onValue(starCountRef, (snapshot) => {
 
 
 
-    
-
-      function animate() {
-        renderer.render(scene, camera);
-        requestAnimationFrame(animate);
-      }
-
-      animate();
-    </script>
-
-    
 
 
-  </body>
+    function animate() {
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+
+
+
+
+</body>
+
 </html>
