@@ -101,8 +101,7 @@ export class GameManager {
 
 
     saveScoreToDatabase(points) {
-        const playerName = localStorage.getItem('playerName'); // Asegúrate de que el jugador haya iniciado sesión correctamente
-
+        const playerName = localStorage.getItem('playerName'); 
         if (!playerName) {
             console.error("Error: No se encontró el nombre del jugador en localStorage.");
             return;
