@@ -117,6 +117,23 @@
     //scene.add(spotLightHelper);
 
 
+    // Cargar la textura de cielo
+    const texture_sky = new THREE.TextureLoader();
+    const skyTexture = texture_sky.load('./img/cielo2.jpg'); 
+
+    const skyGeometry = new THREE.SphereGeometry(1600, 160, 140);
+    const skyMaterial = new THREE.MeshBasicMaterial({
+        map: skyTexture,
+        side: THREE.BackSide 
+    });
+    const skyDome = new THREE.Mesh(skyGeometry, skyMaterial);
+
+    skyDome.rotation.x = Math.PI;
+
+    // Agregar el skydome a la escena
+    scene.add(skyDome);
+
+
     // INIT
     let ColArray = [];
     let collectableArray = [];
