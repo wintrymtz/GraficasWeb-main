@@ -13,7 +13,7 @@ export class GameManager {
 
         this.level = params.get('level') || 'Fail';
         this.difficulty = localStorage.getItem('difficulty') || 'normal';
-        this.amountCoins = 10;
+        this.amountCoins = 0;
         this.currentCoins = 0;
         console.log(this.difficulty);
         if (this.difficulty === "hard") {
@@ -30,6 +30,18 @@ export class GameManager {
         //localStorage.removeItem('score');
         localStorage.removeItem('level');
         localStorage.removeItem('gameMode');
+        console.log('nivel: ', this.level)
+        switch (this.level) {
+            case "1":
+                this.amountCoins = 12;
+                break;
+            case "2":
+                this.amountCoins = 8;
+                break;
+            case "3":
+                this.amountCoins = 16;
+                break;
+        }
 
         this.gravityItemStatus = false;
 
@@ -73,6 +85,15 @@ export class GameManager {
                 this.points += Math.round(100 / currentTime);
                 document.getElementById("score").textContent = this.points;
                 console.log('obtuviste una moneda');
+
+                if (this.gameMode == 1) {
+                    console.log(this.currentCoins, this.amountCoins)
+                    if (this.currentCoins >= this.amountCoins) {
+                        this.finishGame();
+                    }
+                }
+
+
                 break;
             case 1: //item
                 break;
@@ -144,6 +165,12 @@ export class GameManager {
             localStorage.setItem('score', this.points);
             localStorage.setItem('level', this.level);
             localStorage.setItem('gameMode', this.gameMode);
+
+            if (this.gameMode = 0) { //modo hisotira
+
+            } else if (this.gameMode = 1) {  //modo contrarreloj
+                alert('se acabó el contrarreloj');
+            }
             this.saveScoreToDatabase(this.points);
         } else {
             window.location.reload();
